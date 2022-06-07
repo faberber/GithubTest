@@ -3,6 +3,7 @@ global class AggregateResultIterable implements Iterable<AggregateResult> {
 
   global AggregateResultIterable(String soql){
     query = soql;
+    String test;
   }
 
   global Iterator<AggregateResult> Iterator(){
