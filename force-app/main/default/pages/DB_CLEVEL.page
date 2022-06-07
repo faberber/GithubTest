@@ -1,0 +1,22 @@
+<apex:page sidebar="false" showHeader="false" >
+
+<script>
+jQuery( function ($) {
+
+     $('#iframeID').load( function() {              
+         var $frameDoc = this.contentWindow.document,
+             urlMatch = /srcUp\(%27(.*)%27\)/;
+
+         $('a[href*="srcUp"]', $frameDoc).each( function () {
+             this.href = decodeURIComponent(this.href.match(urlMatch)[1]);
+         });
+     });
+
+});
+</script>
+
+<!-- the rest of your page goes here -->
+
+<iframe id="iframeID" src="/01Z580000006C4y?isdtp=vw"/>
+
+</apex:page>

@@ -1,0 +1,623 @@
+<apex:page standardController="Opportunity" extensions="MassEditOrderController" title="Mass Edit" tabStyle="Opportunity" id="pageId" showHeader="false"  sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" >
+    <html xmlns="https://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        
+        <head>            
+            <meta charset="utf-8"/>
+            <apex:stylesheet value="{!URLFOR($Resource.SLDS104, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+            <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+            <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+             
+            <style>
+                html *
+                {
+                   font-size: 9pt !important;
+                   color: #000 !important;
+                   font-family: Arial !important;
+                }
+                .dateStyle{
+                    width: 60% !important;
+                    margin-right: 2% !important;
+                }
+
+                .slds{
+                    background-color: #736d6d !important;
+                }
+
+                .slds .slds-text-heading--small{
+                    font-size: 18px !important;
+                }
+
+                .slds .slds-text-body--small{
+                    font-size: 16px !important;
+                    margin-top: -1px;
+                }
+
+                .slds .slds-page-header__title{
+                    font-size: 20px !important;
+                }
+
+                .slds-input{
+                    width: inherit !important;
+                }
+
+            </style>
+        </head>
+        
+        <body>
+            <apex:form >
+                <div class="slds">
+                    <apex:actionstatus id="counterStatus">
+                        <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;position:fixed;z-index:1;">
+                                <div class="waitingHolder">
+                                    <div class="slds-spinner_container">
+                                        <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                                            <div class="slds-spinner__dot-a"></div>
+                                            <div class="slds-spinner__dot-b"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionstatus>
+                    <!-- Header Starts -->
+                    <div class="slds-page-header" role="banner">
+                      <div class="slds-media">
+                        <div class="slds-media__figure">
+                          <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                            <use xlink:href="{!URLFOR($Resource.SLDS104, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                          </svg>
+                        </div>
+                        <div class="slds-media__body">
+                          <p class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">Mass Edit</p>
+                          <p class="slds-text-body--small slds-page-header__info">Opportunity</p>
+                        </div>
+                        <div class="slds-col slds-no-flex slds-align-bottom">
+                          <div class="slds-button-group" role="group">                            
+                            <apex:commandButton value="Save All" action="{!saveDetails}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral" oncomplete="changeLookupView();"/>
+                            <apex:commandButton value="Delete All" disabled="true" id="deleteBtn" onclick="openDiv(); return false;" styleClass="slds-button slds-button--neutral" oncomplete="changeLookupView();"/>
+                            <apex:commandButton value="Back" action="/{!oppId}" styleClass="slds-button slds-button--neutral" oncomplete="changeLookupView();"/>
+                          </div>
+                        </div> 
+                      </div>
+                    </div>
+                    <!-- Header Ends -->
+                    
+            
+                
+                    <div id="dialog-confirm" style="display:none;">
+                    <div class="slds-modal slds-fade-in-open" aria-hidden="false" role="dialog">
+                        <div class="slds-modal__container">
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-button--icon-inverse slds-modal__close" onClick="closeDiv(); return false;">
+                                    <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                                        <use xlink:href="/assets/icons/action-sprite/svg/symbols.svg#close"></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 class="slds-text-heading--medium">Delete Records</h2>
+                            </div>
+                        <div class="slds-modal__content slds-p-around--medium">
+                            <div>
+                                <p>Are you sure you want to delete the selected records?</p>
+                            </div>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancel" onclick="closeDiv(); return false;"/>
+                            <apex:commandButton styleClass="slds-button slds-button--neutral slds-button--destructive" style="color:white !important;" value="Delete Records" onclick="closeAndDeletetDiv(); return false;"/>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop--open"></div>
+                    </div>
+                    
+                    <apex:actionFunction name="deleteRecords" action="{!deleteRecords}" rerender="mainForm,errorMessage" status="counterStatus"/>
+                    
+                    <apex:outputPanel layout="block" id="mainForm">
+                        
+                        <!-- Opportunity Product Section Starts -->
+                        <br/>
+                                <!-- Error Message Starts -->
+                        <apex:pageMessages id="errorMessage" rendered="{!tempProductError}"/>                               
+                                <!-- Error Message Ends --> 
+                        <apex:outputPanel styleClass="slds-card slds-m-top--small" layout="block" id="productBlock"  >
+                            <div class="slds-card__header slds-grid">
+                                <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <h2 class="slds-text-heading--small slds-truncate">Opportunity Product</h2>
+                                    </div>
+                                </div>
+                                <div class="slds-no-flex">
+                                    <div class="slds-button-group">
+                                        <!--<apex:commandButton value="Add Product" action="{!AddNewProduct}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="OpportunityProduct"/>
+                                        </apex:commandButton>-->
+                                        <apex:commandButton value="Delete Selected" action="{!deletePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('customerBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="OpportunityProduct"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Clone Selected" action="{!clonePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('customerBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="OpportunityProduct"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Save Line" action="{!savePartial}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="OpportunityProduct"/>
+                                        </apex:commandButton>
+                                    </div>
+                                </div>
+                                
+                            </div>                            
+                            <div class="slds-card__body slds-scrollable--x">
+                                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                                   <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label" scope="col">
+                                                <apex:inputCheckbox id="productChkId" onChange="selectAllCheckboxes('{!$Component.productChkId}','OpportunityProductChkbox');" styleClass="checkAll OpportunityProductChkbox"/>
+                                            </th>
+                                            <th class="slds-text-heading--label" scope="col">Opportunity Product</th>
+                                            <th class="slds-text-heading--label" scope="col">Cost</th>
+                                            <th class="slds-text-heading--label" scope="col">Sales Price</th>
+                                            <th class="slds-text-heading--label" scope="col">Solution Type</th>
+                                            <th class="slds-text-heading--label" scope="col">Rebate</th>
+                                            <th class="slds-text-heading--label" scope="col">Vendor</th>
+                                            <th class="slds-text-heading--label" scope="col" colspan="3">Distributor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                          <!--<apex:pageBlock> 
+                                                <script>
+                                                    /* if(!OpportunityProduct.Product2New__c == null ||!OpportunityProduct.Cost__c == null || !OpportunityProduct.UnitPrice== null) {
+                                                          alert("Please fill in the details");
+                                                      } 
+                                                </script>
+                                            </apex:pageBlock> -->
+                                        <apex:repeat value="{!opportunityProductList}" var="OpportunityProduct">
+                                            
+                                             <tr class="slds-hint-parent">
+                                                <td>
+                                                    <apex:inputCheckbox value="{!deleteRecordsMap[OpportunityProduct.id]}" styleClass="chkInput OpportunityProductChkbox" onclick="checkForTrue();" rendered="{!OpportunityProduct.id != null}"/>
+                                                </td>
+                                                <td class="dataCell"><apex:outputField value="{!OpportunityProduct.Product2New__c}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Cost__c}" /></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.UnitPrice}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Solution_Type__c}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Rebate_USD__c}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Vendor__c}"/></td>
+                                                <td class="dataCell" colspan="3"><apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Manufacturer__c}"/></td>
+                                            </tr>
+                                           
+                                          <!--  <tr class="slds-hint-parent">
+                                               <td>
+                                                    <apex:inputCheckbox value="{!deleteRecordsMap[OpportunityProduct.id]}" styleClass="chkInput OpportunityProductChkbox" onclick="checkForTrue();" rendered="{!OpportunityProduct.id != null}"/>
+                                                </td> 
+                                                <td class="dataCell">
+                                                <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Product2New__c}" rendered="{!OpportunityProduct.PricebookEntryId == NULL}"  />
+                                                <apex:outputField styleClass="slds-input" value="{!OpportunityProduct.Product2New__c}" rendered="{!OpportunityProduct.PricebookEntryId != NULL}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input dateStyle" value="{!OpportunityProduct.Cost__c}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.UnitPrice}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Solution_Type__c}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Rebate_USD__c}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Vendor__c}" />
+                                                </td>
+                                                <td class="dataCell">
+                                                    <apex:inputField styleClass="slds-input" value="{!OpportunityProduct.Manufacturer__c}" />
+                                                </td>
+                                                <td></td>
+                                            </tr> -->
+                                        </apex:repeat>
+                                   
+                                        <tr class="slds-hint-parent">
+                                            <td colspan="2" style="font-weight:700;">Total Amounts</td>
+                                            <td style="font-weight:700;">{!totalOpportunityProductCost}</td>
+                                            <td style="font-weight:700;">{!totalOpportunityProductAmountUSD}</td>
+                                            <td style="font-weight:700;"></td>
+                                            <td style="font-weight:700;">{!totalOpportunityProductRebate}</td>
+                                            <td style="font-weight:700;"></td>
+                                            <td style="font-weight:700;"></td>
+                                            <td style="font-weight:700;"></td>
+                                        </tr>
+                                        
+                                               <tr class="slds-hint-parent">
+                                           <td colspan="1"></td>                                             
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Product2New__c}" html-placeholder="Product Name" />
+                                            </td>                                            
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Cost__c}" html-placeholder="Cost"/>
+                                            </td>
+                                           
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.UnitPrice}" html-placeholder="Sales Price"/>
+                                            </td>
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Solution_Type__c}" html-placeholder="Solution Type"/>
+                                            </td>
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Rebate_USD__c}" html-placeholder="Rebate"/>
+                                            </td>
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Vendor__c}" html-placeholder="Vendor"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityProduct.Manufacturer__c}" html-placeholder="Distributor"/>
+                                            </td>
+                                           <td style="font-weight:700;">
+                                                <apex:commandButton value="Add" action="{!addRow}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                                    <apex:param name="param3" assignTo="{!objectType}" value="OpportunityProduct"/>
+                                                </apex:commandButton>
+                                            </td>
+                                        </tr> 
+                                        
+                                    </tbody>
+                                    <tfoot> 
+                                    
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </apex:outputPanel>
+                        
+                        <!-- Opportunity Product Section Ends -->
+
+                        <!-- Customer Billing Section Starts -->
+                        <br/>
+                     <apex:pageMessages id="errorMessageCustomer" rendered="{!tempCustomerError}" />
+                        
+                        <apex:outputPanel styleClass="slds-card slds-m-top--small" layout="block" id="customerBlock" >
+                            <div class="slds-card__header slds-grid">
+                                <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <h2 class="slds-text-heading--small slds-truncate">Customer Billing</h2>
+                                    </div>
+                                </div>
+                                <div class="slds-no-flex">
+                                    <div class="slds-button-group">
+                                        <apex:commandButton value="Delete Selected" action="{!deletePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('customerBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="CustomerBilling"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Clone Selected" action="{!clonePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('customerBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="CustomerBilling"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Save Line" action="{!savePartial}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="CustomerBilling"/>
+                                        </apex:commandButton>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="slds-grid" style="width:30%;">
+                                <div class="slds-col--padded"><apex:inputText value="{!daysCustomerBilling}" html-placeholder="Number Of Days" style="margin-right:1%;" styleClass="slds-input"/></div>
+                                <div class="slds-col--padded">
+                                    <apex:commandButton action="{!changeDate}" rerender="customerBlock,errorMessage" value="Prepone" status="counterStatus" style="margin-right:1%;" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                        <apex:param name="param1" assignTo="{!objectType}" value="CustomerBilling"/>
+                                        <apex:param name="param2" assignTo="{!operationType}" value="Prepone"/>
+                                    </apex:commandButton>
+                                </div>
+                                <div class="slds-col--padded">
+                                    <apex:commandButton value="Postpone" action="{!changeDate}" rerender="customerBlock,errorMessage" status="counterStatus" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                        <apex:param name="param1" assignTo="{!objectType}" value="CustomerBilling"/>
+                                        <apex:param name="param2" assignTo="{!operationType}" value="Postpone"/>
+                                    </apex:commandButton>
+                                </div>
+                            </div>
+                            <div class="slds-card__body slds-scrollable--x">
+                                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label" scope="col">
+                                                <apex:inputCheckbox id="customerChkId" onChange="selectAllCheckboxes('{!$Component.customerChkId}','customerBillingChkbox');" styleClass="checkAll customerBillingChkbox"/>
+                                            </th>
+                                            <th class="slds-text-heading--label" scope="col">Name</th>
+                                            <th class="slds-text-heading--label" scope="col">Billing Date</th>
+                                            <th class="slds-text-heading--label" scope="col">Payment Term</th>
+                                            <th class="slds-text-heading--label" scope="col">Payment Date</th>
+                                            <th class="slds-text-heading--label" scope="col">Billing Amount</th>
+                                            <th class="slds-text-heading--label" scope="col">Currency</th>
+                                            <th class="slds-text-heading--label" scope="col" colspan="3">Billing Amount (USD)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!customerBillingList}" var="customerBilling">
+                                            <tr class="slds-hint-parent">
+                                                <td>
+                                                    <apex:inputCheckbox value="{!deleteRecordsMap[customerBilling.id]}" styleClass="chkInput customerBillingChkbox" onclick="checkForTrue();" rendered="{!customerBilling.id != null}"/>
+                                                </td>
+                                                <td class="dataCell"><apex:outputField value="{!customerBilling.Name}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input dateStyle" value="{!customerBilling.Billing_Date__c}" showDatePicker="false"  onfocus="DatePicker.pickDate(false, this , false);"/></td>
+                                                <td class="dataCell" ><apex:inputField styleClass="slds-input" value="{!customerBilling.Due_Upon_c__c}"/></td>
+                                                <td class="dataCell"><apex:outputField styleClass="slds-input" value="{!customerBilling.Payment_Date__c}"/></td>
+                                                <td class="dataCell" ><apex:inputField styleClass="slds-input" value="{!customerBilling.N_Billing_Amount__c}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!customerBilling.CurrencyIsoCode}"/></td>
+                                                <td class="dataCell" colspan="3"><apex:outputField value="{!customerBilling.N_Billing_Amount_USD__c}"/></td>
+                                            </tr>
+                                        </apex:repeat>
+                                        
+                                        <tr class="slds-hint-parent">
+                                            <td colspan="5" style="font-weight:700;">Total</td>
+                                            <td style="font-weight:700;">{!totalCustomerAmount}</td>
+                                            <td style="font-weight:700;"></td>
+                                            <td style="font-weight:700;">{!totalCustomerAmountUSD}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    
+                                        <tr class="slds-hint-parent">
+                                            <td colspan="2"></td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input dateStyle" value="{!tempCustomer.Billing_Date__c}" html-placeholder="Billing Date" showDatePicker="false"  onfocus="DatePicker.pickDate(false, this , false);" />
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempCustomer.Due_Upon_c__c}" html-placeholder="Payment Term" />
+                                            </td>
+                                            <td></td>
+                                            <td style="font-weight:700;">
+                                                
+                                                <apex:inputField styleClass="slds-input" value="{!tempCustomer.N_Billing_Amount__c}" html-placeholder="Billing Amount"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempCustomer.CurrencyIsoCode}" html-placeholder="Currency" />
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputText styleClass="slds-input" value="{!customerUnit}" html-placeholder="Unit"/>
+                                            </td>
+                                            <td style="font-weight:700; ">
+                                                <apex:inputText styleClass="slds-input" value="{!customerPeriod}" html-placeholder="Period (Month)"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:commandButton value="Add" action="{!addRow}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                                    <apex:param name="param3" assignTo="{!objectType}" value="CustomerBilling"/>
+                                                </apex:commandButton>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </apex:outputPanel>
+                        <!-- Customer Billing Section Ends -->
+                        <br/>
+                        <apex:pageMessages id="errorMessageVendor" rendered="{!tempVendorError}" />
+                        <!-- Vendor Billing Section Starts -->
+                       <!-- <apex:outputPanel styleClass="slds-card slds-m-top--small" layout="block" id="vendorBlock">
+                            <div class="slds-card__header slds-grid">
+                                <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <h2 class="slds-text-heading--small slds-truncate">Vendor Billing</h2>
+                                    </div>
+                                </div>
+                                <div class="slds-no-flex">
+                                    <div class="slds-button-group">
+                                        <apex:commandButton value="Delete Selected" action="{!deletePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('vendorBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="VendorBilling"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Clone Selected" action="{!clonePartial}" status="counterStatus" rerender="mainForm,errorMessage" oncomplete="checkCheckbox('vendorBillingChkbox');" styleClass="slds-button slds-button--neutral slds-button--small">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="VendorBilling"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Save Line" action="{!savePartial}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                            <apex:param name="param3" assignTo="{!objectType}" value="VendorBilling"/>
+                                        </apex:commandButton>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="slds-grid" style="width:30%;">
+                                <div class="slds-col--padded"><apex:inputText value="{!daysVendorBilling}" html-placeholder="Number Of Days" style="margin-right:1%;" styleClass="slds-input"/></div>
+                                <div class="slds-col--padded">
+                                    <apex:commandButton action="{!changeDate}" rerender="vendorBlock,errorMessage" value="Prepone" status="counterStatus" style="margin-right:1%;" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                        <apex:param name="param1" assignTo="{!objectType}" value="VendorBilling"/>
+                                        <apex:param name="param2" assignTo="{!operationType}" value="Prepone"/>
+                                    </apex:commandButton>
+                                </div>
+                                <div class="slds-col--padded">
+                                    <apex:commandButton value="Postpone" action="{!changeDate}" rerender="vendorBlock,errorMessage" status="counterStatus" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                        <apex:param name="param1" assignTo="{!objectType}" value="VendorBilling"/>
+                                        <apex:param name="param2" assignTo="{!operationType}" value="Postpone"/>
+                                    </apex:commandButton>
+                                </div>
+                            </div>
+                            <div class="slds-card__body slds-scrollable--x">
+                                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label" scope="col">
+                                                <apex:inputCheckbox id="vendorChkId" onChange="selectAllCheckboxes('{!$Component.vendorChkId}','vendorBillingChkbox');" styleClass="checkAll vendorBillingChkbox"/>
+                                            </th>
+                                            <th class="slds-text-heading--label" scope="col">Name</th>
+                                            <th class="slds-text-heading--label" scope="col">Billing Date</th>
+                                            <th class="slds-text-heading--label" scope="col">Payment Term</th>
+                                            <th class="slds-text-heading--label" scope="col">Payment Date</th>
+                                            <th class="slds-text-heading--label" scope="col">Vendor</th>
+                                            <th class="slds-text-heading--label" scope="col">Billing Amount</th>
+                                            <th class="slds-text-heading--label" scope="col">Currency</th>
+                                            <th class="slds-text-heading--label" scope="col" colspan="3">Billing Amount (USD)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!vendorBillingList}" var="vendorBilling">
+                                            <tr class="slds-hint-parent">
+                                                <td>
+                                                    <apex:inputCheckbox value="{!deleteRecordsMap[vendorBilling.id]}" styleClass="chkInput vendorBillingChkbox" onclick="checkForTrue();" rendered="{!vendorBilling.id != null}"/>
+                                                </td>
+                                                <td class="dataCell"><apex:outputField value="{!vendorBilling.Name}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input dateStyle" value="{!vendorBilling.Billing_Date__c}" showDatePicker="false"  onfocus="DatePicker.pickDate(false, this , false);"/></td>
+                                                <td class="dataCell" ><apex:inputField styleClass="slds-input" value="{!vendorBilling.Due_Upon__c}"/></td>
+                                                <td class="dataCell"><apex:outputField styleClass="slds-input" value="{!vendorBilling.Payment_Date__c}"/></td>                                                
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!vendorBilling.Vendor__c}"/></td>
+                                                <td class="dataCell" ><apex:inputField styleClass="slds-input" value="{!vendorBilling.N_Billing_Amount__c}"/></td>
+                                                <td class="dataCell"><apex:inputField styleClass="slds-input" value="{!vendorBilling.CurrencyIsoCode}"/></td>
+                                                <td class="dataCell" colspan="3"><apex:outputField value="{!vendorBilling.N_Billing_Amount_USD__c}"/></td>
+                                            </tr>
+                                        </apex:repeat>
+                                        
+                                        <tr class="slds-hint-parent">
+                                            <td colspan="6" style="font-weight:700;">Total</td>
+                                            <td style="font-weight:700;">{!totalVendorAmount}</td>
+                                            <td style="font-weight:700;"></td>
+                                            <td style="font-weight:700;">{!totalVendorAmountUSD}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    
+                                        <tr class="slds-hint-parent">
+                                            <td colspan="2"></td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input dateStyle" value="{!tempVendor.Billing_Date__c}" html-placeholder="Billing Date" showDatePicker="false"  onfocus="DatePicker.pickDate(false, this , false);" />
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempVendor.Due_Upon__c}" html-placeholder="Payment Term"/>
+                                            </td>
+                                            <td></td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempVendor.Vendor__c}" html-placeholder="Vendor"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempVendor.N_Billing_Amount__c}" html-placeholder="Billing Amount" />
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempVendor.CurrencyIsoCode}" html-placeholder="Currency" />
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputText styleClass="slds-input" value="{!vendorUnit}" html-placeholder="Unit"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:inputText styleClass="slds-input" value="{!vendorPeriod}" html-placeholder="Period (Month)"/>
+                                            </td>
+                                            <td style="font-weight:700;">
+                                                <apex:commandButton value="Add" action="{!addRow}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="changeLookupView();">
+                                                    <apex:param name="param3" assignTo="{!objectType}" value="VendorBilling"/>
+                                                </apex:commandButton>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </apex:outputPanel> -->
+                        <!-- Vendor Billing Section Ends -->
+                        <br/>
+                    </apex:outputPanel>
+                </div>
+            </apex:form>
+
+            <script> 
+                        $(document).ready(function(){
+                            changeLookupView();
+                            changeSelectClass();
+                        });
+                        
+                        function changeLookupView(){
+                            for(var i = 0; i < document.getElementsByClassName('provider').length; i++){
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('purchaseFrom').length; i++){
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('solutionResponsible').length; i++){
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('vendor').length; i++){
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                        }
+                        
+                        function selectAllCheckboxes(pId, clsName){
+                            for(var i = 1; i < document.getElementsByClassName(clsName).length; i++){
+                                document.getElementsByClassName(clsName)[i].checked = document.getElementById(pId).checked;
+                            }
+                            checkForTrue();
+                        }
+                        
+                        function checkCheckbox(clsName){
+                            var isTrue = false;
+                            for(var i = 1; i < document.getElementsByClassName(clsName).length; i++){
+                                if(document.getElementsByClassName(clsName)[i].checked == true){
+                                    isTrue = true;
+                                }
+                            }
+                            document.getElementsByClassName(clsName)[0].checked = isTrue;
+                            checkForTrue();
+                        }
+                        
+                        function checkForTrue(){
+                            var allFalse = true;
+                            for(var i = 0; i < document.getElementsByClassName('chkInput').length; i++){
+                                if(document.getElementsByClassName('chkInput')[i].checked == true){
+                                    allFalse = false;
+                                    document.getElementById('pageId:j_id3:deleteBtn').disabled = false;
+                                    document.getElementById('pageId:j_id3:deleteBtn').onclick = function() { openDiv(); return false; };
+                                }
+                            }
+                            if(allFalse == true){
+                                document.getElementById('pageId:j_id3:deleteBtn').disabled = true;
+                            }
+                            changeLookupView();
+                        }
+                        
+                        function openDiv(){
+                            document.getElementById('dialog-confirm').style.display = 'Block';
+                        }
+                        
+                        function closeAndDeletetDiv(){
+                            deleteRecords();
+                            document.getElementById('dialog-confirm').style.display = 'None';
+                        }
+                        
+                        function closeDiv(){
+                            document.getElementById('dialog-confirm').style.display = 'None';
+                        }
+                        
+                        function changeMargin(costId, salesID, marginId){
+                            var costP = parseInt(document.getElementById(costId).childNodes[0].value.replace('.','').replace(',','.'));
+                            var salesP = parseInt(document.getElementById(salesID).childNodes[0].value.replace('.','').replace(',','.'));
+                            var margin = 0.0;
+                            if(salesP > 0 && !isNaN(costP)) margin = ((salesP - costP) / salesP) * 100;
+                            margin = margin.toFixed(2);
+                            document.getElementById(marginId).childNodes[0].innerHTML = '% ' + margin;
+                        }
+                        
+                        function changeSelectClass(){
+                            for(var i = 0; i < document.getElementsByClassName('profitCenter').length; i++){
+                                document.getElementsByClassName('profitCenter')[i].childNodes[0].childNodes[0].className = 'slds-input';
+                            }
+                        }
+                    </script>
+        </body>
+    </html>
+</apex:page>

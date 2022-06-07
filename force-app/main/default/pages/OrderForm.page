@@ -1,0 +1,256 @@
+<apex:page controller="OrderFormController" sidebar="false" contentType="application/vnd.ms-excel#OrderForm.xls" cache="true" ><!--contentType="application/vnd.ms-excel#OrderForm.xls" cache="true"-->
+    <style type="text/css">
+        body{
+            font-family: Arial Unicode MS;
+        }
+        body *{
+            font-family: Arial Unicode MS;
+        }
+    </style>
+    
+    <table width="100%" cellpadding="5" cellspacing="0">
+        <tr>
+            <td style="font-size: 40px;color: #265490;font-weight: 600;">NETAS</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Sipariş Türü</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        
+        <tr>
+            <td colspan="5" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;">Müşteri Bilgileri</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">MÜŞTERİ CARİ BİLGİSİ</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Account.AccountNumber}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">FATURA ADRESİ</td>
+            <td style="border: 1px solid black;" colspan="4">
+                {!oppObj.Account.BillingStreet} {!oppObj.Account.BillingCity} {!oppObj.Account.BillingState} {!oppObj.Account.BillingPostalCode} {!oppObj.Account.BillingCountry}
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">VERGİ DAİRESİ</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Account.Tax_Office__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">VERGİ NUMARASI</td>
+            <td style="border: 1px solid black;" colspan="4">{! oppObj.Account.Tax_Id__c }</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">TELEFON</td>
+            <td style="border: 1px solid black;" colspan="4">{! oppObj.Account.Phone }</td>
+        </tr>
+        
+        <tr>
+            <td colspan="5" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;">Proje Bilgileri</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Şirket:</td>
+            <td style="border: 1px solid black;" colspan="4">{! oppObj.Account.Name }</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">PAF/DCA NO</td>
+            <td style="border: 1px solid black;" colspan="4">{! oppObj.Opportunity_ID__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">PAF/DCA Proje Tanımı</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.name} / {!oppObj.Opportunity_Description__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Segment</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Business_Unit__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Segment Detail</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Business_Unit_Detail__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Account:</td>
+            <td style="border: 1px solid black;" colspan="4">{! oppObj.Owner.FirstName} {!oppObj.Owner.LastName }</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Yöneticisi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Adı</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Name}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Kısa Tanımı</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Opportunity_Description__c}</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sözleşme No</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sözleşme Tarihi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sözleşme Bedeli</td>
+            <td style="border: 1px solid black;" colspan="2"></td>
+            <td style="border: 1px solid black;width:12%;background-color:#B6DDE8;">Curr.</td>
+            <td style="border: 1px solid black;width:12%;"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sipariş No</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sipariş Tarihi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Müşteri Sipariş Bedeli</td>
+            <td style="border: 1px solid black;" colspan="2"></td>
+            <td style="border: 1px solid black;width:12%;background-color:#B6DDE8;">Curr.</td>
+            <td style="border: 1px solid black;width:12%;"></td>
+        </tr>
+        
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">ATP NO (Müşteri Siparişi Yoksa doldurulacak)</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Başlangıç Tarihi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Bitiş Tarihi:</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Revenue Recognize Tipi</td>
+            <td style="border: 1px solid black;" colspan="4">{!oppObj.Revenue_Recognition__c}</td>
+        </tr>
+        
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Proje Marjini %</td>
+            <td style="border: 1px solid black;width:12%;">{!oppObj.Estimated_Margin_Perc__c}</td>
+            <td style="border: 1px solid black;" colspan="3"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Fatura Türü</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Fatura Para Birimi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Fatura Kur Tipi</td>
+            <td style="border: 1px solid black;" colspan="4"></td>
+        </tr>
+        
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Avans Bilgisi</td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:12%;background-color:#B6DDE8;">Avans Yüzdesi</td>
+            <td style="border: 1px solid black;width:12%;"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Garanti İçi Bakım </td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:12%;background-color:#B6DDE8;">Süre</td>
+            <td style="border: 1px solid black;width:12%;"></td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;width:50%;border: 1px solid black;">Garanti Dışı Bakım</td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:13%;"></td>
+            <td style="border: 1px solid black;width:12%;background-color:#B6DDE8;">Süre</td>
+            <td style="border: 1px solid black;width:12%;"></td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td colspan="6" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;text-align:center;">Faturalama Planı</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Faturalama Koşulu</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Planlanan Faturalama Tarihi</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Planlanan Faturalama Tutarı</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Curr.</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Fatura Açıklaması</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Fatura İlave Not Bilgisi</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td colspan="6" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;text-align:center;">Ödeme Planı</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Ödeme Koşulu</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Ödeme Yüzdesi</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Ödeme Tarihi</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Ödeme Tutarı</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Curr.</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;"></td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td colspan="6" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;text-align:center;">Maliyet Planı</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Maliyet Kalemi</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Vendor</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Maliyet Oluşma Tarihi</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Maliyet Tutarı</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Curr.</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;"></td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellpadding="5" cellspacing="0" style="border: 1px solid black;border-width: 1px 1px 1px 1px;font-size: 14px;">
+        <tr>
+            <td colspan="6" style="background-color:#31859B;color:#FFFF99;border: 1px solid black;text-align:center;">Gelir Planı</td>
+        </tr>
+        <tr>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Taksit</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Tarih</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Tutar</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;">Curr.</td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;"></td>
+            <td style="background-color:#B6DDE8;border: 1px solid black;"></td>
+        </tr>
+    </table>
+    
+</apex:page>

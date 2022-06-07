@@ -1,0 +1,9 @@
+<apex:page standardController="Lead" showHeader="false" sidebar="false" renderAs="PDF" RENdered="TRUE">
+  <apex:form >
+    <apex:pageBlock title="My Content" mode="read">
+      <apex:pageBlockSection title="Content" columns="1">
+        <apex:outputField value="{!Lead.Description}"/>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

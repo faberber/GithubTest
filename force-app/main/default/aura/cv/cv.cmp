@@ -1,0 +1,12 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <lightning:recordEditForm aura:id="recordViewForm"
+                                  objectApiName="Job_Offer__c"
+                                  onsuccess="{!c.onSuccess}">
+            <lightning:messages />
+            <lightning:inputField fieldName="Name" />
+            <lightning:inputField fieldName="Department__c" />
+            <lightning:inputField fieldName="Job_Offer_End_Date__c" />
+            <lightning:inputField fieldName="Job_Offer_Start_Date__c" />
+            <lightning:button aura:id="submit" type="submit" label="Add" class="slds-m-top_medium" />
+        </lightning:recordEditForm>
+</aura:component>

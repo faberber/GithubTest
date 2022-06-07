@@ -1,0 +1,100 @@
+<apex:page standardController="CV__c" extensions="CVVisualForcePageExtensions"  showHeader="false" renderAs="pdf" >
+    <apex:pageBlock >
+        <table width="100%">
+            <tr> 
+                <td><p align = "right"><b><h2>CV {!CV__c.First_Name__c} {!CV__c.Last_Name__c}</h2></b></p></td>
+                <td></td>
+                <td><p align = "right"><apex:image id="imagedisplay" url="/servlet/servlet.FileDownload?file={!file.Id}" width="130" height="150" rendered="{!IF(file.Id==null,false,true)}"/></p></td>  
+            </tr>
+        </table>
+        <center>
+            <h2>
+                
+            </h2>
+        </center>
+        <table width="100%" title="">
+            <tr> 
+                <td ><b>First Name:</b></td>
+                <td><apex:outputField value="{!CV__c.First_Name__c}"/> </td>
+                <td><b>Last Name:</b></td>
+                <td><apex:outputField value="{!CV__c.Last_Name__c}"/>  </td>  
+            </tr>
+            <tr>
+                <td><b>Birthday:</b></td>
+                <td><apex:outputField value="{!CV__c.Birthday__c}"/> </td>
+                <td><b>E-Mail:</b></td>
+                <td><apex:outputField value="{!CV__c.E_Mail__c}"/></td>
+            </tr>
+            <tr>
+                <td><b>Web Site:</b></td>
+                <td><apex:outputField value="{!CV__c.Web_Site__c}"/></td>
+                <td><b>Maried Status:</b></td>
+                <td><apex:outputField value="{!CV__c.Maried_Status__c}"/> </td>
+            </tr>
+            <tr>
+                <td><b>Military:</b></td>
+                <td><apex:outputField value="{!CV__c.Millitary__c}"/>  </td>
+                <td><b>Job Experience:</b></td>
+                <td><apex:outputField value="{!CV__c.Job_Experience__c}"/> </td>
+            </tr>
+        </table>
+        <p></p><p></p>
+        <h3>
+            {!TitleSchool}  
+        </h3>
+        
+        <apex:pageBlockTable width="100%" title="" value="{!CvInformationListSchool}" var="CvInformationSchool"  rendered="{!IF(CvInformationListSchool.size>0,true,false)}">
+            <apex:column headerValue="School Name">
+                <apex:outputField value="{!CvInformationSchool.School_Name__c}"/>
+            </apex:column>
+            <apex:column headerValue="School Type">
+                <apex:outputField value="{!CvInformationSchool.School_Type__c}"/>
+            </apex:column>
+            <apex:column headerValue="City">
+                <apex:outputField value="{!CvInformationSchool.City__c}"/>
+            </apex:column>
+            <apex:column headerValue="Graduated Status">
+                <apex:outputField value="{!CvInformationSchool.Graduated_Status__c}"/>
+            </apex:column>                
+            <apex:column headerValue="Grade Average">
+                <apex:outputField value="{!CvInformationSchool.Grade_Average__c}"/>
+            </apex:column> 
+        </apex:pageBlockTable>  
+        <p></p><p></p>
+        <h3>
+            {!TitleCompany}
+        </h3>
+        <apex:pageBlockTable title="{!$Label.Company_Information}" width="100%" value="{!CvInformationListCompany}" var="CvInformationCompany" rendered="{!IF(CvInformationListCompany.size>0,true,false)}" >
+            <apex:column headerValue="Last Worked Company Name">
+                <apex:outputField value="{!CvInformationCompany.Last_Worked_Company__c}"/>
+            </apex:column>
+            <apex:column headerValue="Position in The Last Company">
+                <apex:outputField value="{!CvInformationCompany.Position_in_The_Last_Company__c}"/>
+            </apex:column>
+            <apex:column headerValue="Department">
+                <apex:outputField value="{!CvInformationCompany.Department__c}"/>
+            </apex:column>
+            <apex:column headerValue="Year">
+                <apex:outputField value="{!CvInformationCompany.Years__c}"/>
+            </apex:column>                              
+        </apex:pageBlockTable> 
+        <p></p><p></p>
+        <h3>
+            {!TitleCertificate}
+        </h3>
+        <apex:pageBlockTable summary="" title="" width="100%" value="{!CvInformationListCertificate}" var="CvInformationCertificate" rendered="{!IF(CvInformationListCertificate.size>0,true,false)}"  >
+            <apex:column headerValue="Certificate Name">
+                <apex:outputField value="{!CvInformationCertificate.Certificate_Name__c}"/>
+            </apex:column>
+            <apex:column headerValue="Level">
+                <apex:outputField value="{!CvInformationCertificate.Level__c}"/>
+            </apex:column>
+            <apex:column headerValue="Institution">
+                <apex:outputField value="{!CvInformationCertificate.Institution__c}"/>
+            </apex:column>                            
+        </apex:pageBlockTable> 
+        <apex:pageBlockSection >
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+</apex:page>

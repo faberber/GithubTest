@@ -1,0 +1,88 @@
+<apex:page controller="ExportExcel" contentType="txt/xml#CustomerView360.xls" cache="true" showheader="false">
+    <apex:outputText value="{!xlsHeader}"/>
+    <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+              xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+              xmlns:html="http://www.w3.org/TR/REC-html40">
+        
+        <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+            <style> 
+                br {mso-data-placement:same-cell;}	
+            </style>
+            
+        </head>
+        <Styles>
+            <Style ss:ID="s1">
+                <Alignment/>
+                <Borders/>
+                <Font ss:Size="10" ss:Bold="1"/>
+                <Interior ss:Color="#FFCC99" ss:Pattern="Solid"/>
+                <NumberFormat/>
+                <Protection/>
+            </Style>
+            
+            <Style ss:ID="s2">
+                br {mso-data-placement:same-cell;}	
+                <Font ss:Size="9"/>
+            </Style>
+            <Style ss:ID="s3">
+                <Font ss:Size="9"/>
+                <NumberFormat ss:Format="#,##0.00"/>
+            </Style>
+        </Styles>
+        
+        <Worksheet ss:Name="Cases">
+            <Table x:FullColumns="1" x:FullRows="1">
+                <Column ss:Width="170"/>
+                <Column ss:Width="100"/>
+                <Column ss:Width="100"/>
+                <Column ss:Width="130"/>
+                <Column ss:Width="100"/>
+                <Column ss:Width="100"/>  
+                <Column ss:Width="100"/> 
+                <Column ss:Width="300"/> 
+                <Row>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Account Name</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Account Country</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Account Region</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Case Origin</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Date Opened</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Status</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Contact Name</Data></Cell>
+                    <Cell ss:StyleID="s1"><Data ss:Type="String">Subject</Data></Cell>
+                </Row>
+                <apex:repeat value="{!summaryList3}" var="oppLine">
+                    <Row>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Account Name</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Account Country</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Account Region</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Case Origin</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Date Opened</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Status</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Contact Name</Data></Cell>
+                        <Cell ss:StyleID="s1"><Data ss:Type="String">Subject</Data></Cell>
+                    </Row>
+                </apex:repeat>
+            </Table>
+            <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+                <PageLayoutZoom>0</PageLayoutZoom>
+                <Selected/>
+                <FreezePanes/>
+                <FrozenNoSplit/>
+                <SplitHorizontal>1</SplitHorizontal>
+                <TopRowBottomPane>1</TopRowBottomPane>
+                <ActivePane>2</ActivePane>
+                <Panes>
+                    <Pane>
+                        <Number>3</Number>
+                    </Pane>
+                </Panes>
+                <ProtectObjects>False</ProtectObjects>
+                <ProtectScenarios>False</ProtectScenarios>
+            </WorksheetOptions>
+        </Worksheet>
+        
+    </Workbook>
+</apex:page>

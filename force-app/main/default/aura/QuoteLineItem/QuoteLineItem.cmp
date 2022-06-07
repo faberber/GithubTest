@@ -1,0 +1,381 @@
+<aura:component controller="QuoteLineItemComponentController" implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction,force:hasRecordId" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.FirstQuoteLoad}" />  
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="ProductCount" type="Integer" default="0"/>
+
+    <!-- Quote line item table attribute -->
+    <aura:attribute name="QuoteLineItem" type="QuoteLineItem" />
+    <aura:attribute name="DeleteQuoteLineItem" type="QuoteLineItem" />
+    <aura:attribute name="EditQuoteLineItem" type="QuoteLineItem" />  
+    <aura:attribute name="EditQuoteLineItemId" type="String" default=""/>
+    <aura:attribute name="EditQuoteLineItemName" type="String" default=""/>
+    <aura:attribute name="EditQuoteLineItemDiscount" type="Integer" default=""/>
+    <aura:attribute name="EditQuoteLineItemPrice" type="Integer" default=""/>
+    <aura:attribute name="Columns" type="List" />   
+    <!-- Product list table attribute  -->
+    <aura:attribute name="currentCount" type="Integer" default="0"/>
+    <aura:attribute name="initialRows" type="Integer" default="10"/>
+    <aura:attribute name="loadMoreOffset" type="Integer" default="20"/>
+    <aura:attribute name="keyField" type="String" default="id"/>
+    <aura:attribute name="selection" type="List" />
+    <aura:attribute name="selectedRows" type="List" />
+    <aura:attribute name="selectedRows1" type="List" />
+    <aura:attribute name="totalNumberOfRows" type="Integer" default="300"/>
+    <aura:attribute name="loadMoreStatus" type="String" default="{ 'Quantity': '1'}"/>
+    <aura:attribute name="data" type="List" default="[]"/>
+    <aura:attribute name="Selected" type="List"/>
+    <aura:attribute name="SelectedEdit" type="List" default=""/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="columns2" type="List"/>
+    
+    <!-- New Quote line item attribute -->
+    <aura:attribute name="mouseStart" type="string" />
+    <aura:attribute name="newWidth" type="string" />
+    <aura:attribute name="currentEle" type="Object" />
+    <aura:attribute name="Discount" type="String" default="Default"/>
+    <!-- HEADER LINE -->  
+    <div class="slds-box slds-theme--default slds-container_large">
+        <lightning:layout class="slds-page-header slds-page-header--object-home">
+            <lightning:layoutItem>
+                <lightning:icon iconName="standard:quotes" alternativeText="Quote Line Items"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="horizontal-small">
+                <div class="page-section page-header">
+                    <h1 class="slds-text-heading--label">Quote Line Items</h1>
+                    <h2 class="slds-text-heading--medium">New Quote Line Item ({!v.ProductCount})
+                        
+                    </h2>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem alignmentBump="left">
+                <div style="margin-right:0px; margin-left:auto; align:right;">
+                    <lightning:buttonStateful class="align:right;" 
+                                              labelWhenOff="Add Products"
+                                              iconNameWhenOff="utility:add"
+                                              onclick="{!c.Displaycreate}"        
+                                              />
+                    <lightning:buttonStateful class="align:right;" 
+                                              labelWhenOff="Edit Products"
+                                              iconNameWhenOff="utility:edit"
+                                              onclick="{!c.DisplayALLeditmodal}"        
+                                              />
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <!-- / HEADER LINE -->
+        <!-- BODY -->
+        <!-- LIST QUOTE LİNE ITEM -->
+        
+        <lightning:datatable data="{!v.QuoteLineItem}" 
+                             columns="{!v.Columns}" 
+                             keyField="Id" 
+                             showRowNumberColumn="true"
+                             hideCheckboxColumn="true"
+                             onrowaction="{! c.handleRowAction }"
+                             onheaderaction="{! c.handleHeaderAction }"/>
+        <!-- /LIST QUOTE LİNE ITEM -->
+        <!-- NEW QUOTE LİNE ITEM -->
+        <!-- CREATE MODAL -->
+        <div id="createmodal" class="demo-only" style="height: 640px; display: none;"  >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  onclick ="{!c.noDisplaycreate1}" title="Close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Price Book</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div >
+                            <lightning:input aura:id="enter-search"
+                                             name="enter-search"
+                                             label="Search when user hits the 'enter' key"
+                                             type="search"
+                                             onchange="{!c.SearchKeyChange }"
+                                             />
+                        </div>
+                        <div style="height: 300px">
+                            <h1>Selected Rows: {! v.selectedRowsCount }</h1>
+                            <lightning:datatable columns="{!v.columns2 }"
+                                                 data="{!v.data }"
+                                                 keyField="Idprice"
+                                                 selectedRows="{!v.selectedRows}"
+                                                 onrowselection="{!c.updateSelectedText }"
+                                                 showRowNumberColumn="true"
+                                                 enableInfiniteLoading="true"
+                                                 loadMoreOffset="{!v.loadMoreOffset }"
+                                                 onloadmore="{!c.loadMoreData }"/>
+                        </div>
+                        <br/><br/>
+                        
+                    </div><footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick ="{!c.noDisplaycreate1}">Cancel</button>
+                    <button class="slds-button slds-button_neutral" onclick ="{!c.Displaycreate1}">Next</button>
+                    </footer>
+                </div>
+                
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <div id="createmodal1" class="demo-only" style="height: 640px; display: none;"  >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  onclick ="{!c.noDisplaycreate}" title="Close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">CREATE QUOTE LINE ITEM</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="container">
+                            <div class="slds-table--header-fixed_container slds-scrollable_x">
+                                <div class="">
+                                    <table class="slds-table slds-table--header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" style="table-layout:fixed ">
+                                        <thead>
+                                            <tr class="slds-text-title_caps">
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right " >
+                                                    <div class="slds-cell-fixed" >
+                                                        <span class="slds-truncate" title="Opportunity Name">Product Name</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right ">
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Close Date">Discount</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right " >
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Stage"><abbr class="slds-required" title="required">* </abbr>Sales Price</span>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        </tbody>
+                                    </table>
+                                    <!-- ITERASYON START --> 
+                                    <aura:iteration items="{!v.Selected}" var="Selected" indexVar="ivar">   
+                                        <lightning:recordEditForm aura:id="fatih"
+                                                                  onload="{!c.handleLoad}"
+                                                                  onsubmit="{!c.handleSubmit}"
+                                                                  onsuccess="{!c.handleSuccess}"
+                                                                  onerror="{!c.getError}"                   
+                                                                  objectApiName="QuoteLineItem"  >
+                                            <lightning:messages />
+                                            <table class="slds-table slds-table--header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" style="table-layout:fixed">
+                                                <tbody>
+                                                    <tr>
+                                                        <td data-label="Opportunity Name">
+                                                            <div class="slds-truncate" title="aptclouds">
+                                                                <output value="{!Selected.name}"  variant="label-hidden"/>
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Close Date">
+                                                            <div class="slds-form-element">
+                                                                <div class="slds-form-element__control">
+                                                                    <lightning:inputField  fieldName="Discount" variant="label-hidden"/>
+                                                                </div>
+                                                            </div>       
+                                                        </td>
+                                                        <td data-label="Prospecting">
+                                                            <div class="slds-form-element">
+                                                                <div class="slds-form-element__control">
+                                                                    <lightning:inputField fieldName="UnitPrice" variant="label-hidden"/>
+                                                                    <lightning:inputField fieldName="QuoteId" value="{!v.recordId}" class="slds-hide"/>    
+                                                                    <lightning:inputField fieldName="Product2Id" value="{!Selected.Id}" class="slds-hide"/>    
+                                                                    <lightning:inputField fieldName="PricebookEntryId" value="{!Selected.Idprice}" class="slds-hide"/>    
+                                                                    <lightning:inputField  fieldName="Quantity" value="1" class="slds-hide"/>
+                                                                </div>
+                                                            </div>                                                
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>  
+                                        </lightning:recordEditForm>
+                                    </aura:iteration>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick ="{!c.noDisplaycreate}">Cancel</button>
+                        <lightning:button variant="brand" type="submit" name="save" label="Save" onclick="{!c.handleSubmit}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"/>
+        </div>
+        <!-- EDIT MODAL -->
+        <div id="editQuoteLineItem2" class="demo-only" style="display: none;" >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  onclick ="{!c.noDisplayeditmodal}" title="Close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit Quote Line Item {!v.EditQuoteLineItemName}</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="container">
+                            <div class="slds-table--header-fixed_container slds-scrollable_x">
+                                <div class="">
+                                    <table class="slds-table slds-table--header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" style="table-layout:fixed">
+                                        <thead>
+                                            <tr class="slds-text-title_caps">
+                                                <th scope="col" class="slds-is-resizable" >
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Opportunity Name">Product Name</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-is-resizable">
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Close Date">Discount</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-is-resizable" >
+                                                    <div class="slds-cell-fixed" >
+                                                        <span class="slds-truncate" title="Stage"><abbr class="slds-required" title="required">* </abbr>Sales Price</span>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <aura:if isTrue="{!v.saved}">
+                                        <lightning:recordEditForm aura:id="form"
+                                                                  onload="{!c.handleLoad2}"
+                                                                  recordId="{!v.EditQuoteLineItemId}"
+                                                                  onsubmit="{!c.handleOnSubmit22}"
+                                                                  onsuccess="{!c.handleSuccess2}"
+                                                                  objectApiName="QuoteLineItem">
+                                            <lightning:layout multipleRows="true" >
+                                                <lightning:layoutItem size="4"  >
+                                                    <output style="font-size: 15px; margin-left: 15px;" value="{!v.EditQuoteLineItemName}"/>                 
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem size="4"  >
+                                                    <lightning:inputField  fieldName="Discount" variant="label-hidden" aura:id="form1"/>
+                                                </lightning:layoutItem>
+                                                <lightning:layoutItem size="4"  >
+                                                    <lightning:inputField fieldName="UnitPrice" variant="label-hidden" aura:id="form2"/>   
+                                                </lightning:layoutItem>
+                                            </lightning:layout>
+                                            <lightning:messages />
+                                        </lightning:recordEditForm>
+                                    </aura:if>
+                                    <br/>
+                                    
+                                </div>
+                            </div>
+                        </div>         
+                    </div> 
+                    <footer class="slds-modal__footer">
+                        <lightning:button class="slds-button slds-button_brand" disabled="{!v.disabled}" variant="brand" type="submit" name="save" label="Save" onclick="{!c.handleOnSubmit22}"/>
+                        <lightning:button class="slds-button slds-button_neutral" type="cancel" onclick ="{!c.noDisplayeditmodal}">Cancel</lightning:button>
+                    </footer> 
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <!-- Edit All Item -->
+        <div id="editAllItem" class="demo-only" style="height: 640px; display: none;"  >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  onclick ="{!c.noDisplayALLeditmodal}" title="Close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">EDIT ALL QUOTE LINE ITEM</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="container">
+                            <div class="slds-table--header-fixed_container slds-scrollable_x">
+                                <div class="">
+                                    <table class="slds-table slds-table--header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" style="table-layout:fixed ">
+                                        <thead>
+                                            <tr class="slds-text-title_caps">
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right " >
+                                                    <div class="slds-cell-fixed" >
+                                                        <span class="slds-truncate" title="Opportunity Name">Product Name</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right ">
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Close Date">Discount</span>
+                                                    </div>
+                                                </th>
+                                                <th scope="col" class="slds-cell-buffer_left  slds-cell-buffer_right " >
+                                                    <div class="slds-cell-fixed">
+                                                        <span class="slds-truncate" title="Stage"><abbr class="slds-required" title="required">* </abbr>Sales Price</span>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody >
+                                        </tbody>
+                                    </table>
+                                    <!-- ITERASYON START --> 
+                                    <aura:iteration items="{!v.SelectedEdit}" var="Selected" indexVar="ivar">   
+                                        <lightning:recordEditForm aura:id="EditAllItem"
+                                                                  recordId="{!Selected.Id}"
+                                                                  onsubmit="{!c.handleSubmit5}"
+                                                                  onsuccess="{!c.handleSuccess5}"
+                                                                  objectApiName="QuoteLineItem"  >
+                                            <lightning:messages />
+                                            <table class="slds-table slds-table--header-fixed slds-table_bordered slds-table_edit slds-table_resizable-cols" style="table-layout:fixed">
+                                                <tbody>
+                                                    <tr>
+                                                        <td data-label="Opportunity Name">
+                                                            <div class="slds-truncate" title="aptclouds">
+                                                                <output value="{!Selected.name}"  variant="label-hidden"/>
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Close Date">
+                                                            <div class="slds-form-element">
+                                                                <div class="slds-form-element__control">
+                                                                    <lightning:inputField  fieldName="Discount" variant="label-hidden"/>
+                                                                </div>
+                                                            </div>       
+                                                        </td>
+                                                        <td data-label="Prospecting">
+                                                            <div class="slds-form-element">
+                                                                <div class="slds-form-element__control">
+                                                                    <lightning:inputField fieldName="UnitPrice" variant="label-hidden"/>
+                                                                </div>
+                                                            </div>                                                
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>  
+                                        </lightning:recordEditForm>
+                                    </aura:iteration>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick ="{!c.noDisplayALLeditmodal}">Cancel</button>
+                        <lightning:button variant="brand" type="submit" name="save" label="Save" onclick="{!c.handleSubmit5}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"/>
+        </div>
+        <!-- Delete QUOTE LİNE ITEM -->
+        <div id="delete" class="demo-only" style="display: none;" >
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  onclick ="{!c.noDisplaydeletemodal}" title="Close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Quote Line Item</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <center> Are you sure you want to delete this Quote Line Item?</center>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick ="{!c.noDisplaydeletemodal}">Cancel</button>
+                        <button class="slds-button slds-button_destructive" onclick ="{!c.Displaydeletemodal}">Delete</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <!-- /Delete QUOTE LİNE ITEM -->
+    </div>    
+    <!-- /BODY -->
+</aura:component>

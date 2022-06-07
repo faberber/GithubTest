@@ -1,0 +1,31 @@
+<apex:component access="global" id="requiredblock">
+
+  <style>
+
+      .requiredDiv{
+
+      background-color:#c00;
+
+             height: 17px;
+
+             width: 3px;
+
+             display: inline;
+
+             position: absolute;
+
+             margin-top: 2px;
+
+      }
+
+      input, select, textarea {
+
+         margin-left:4px;
+
+   }
+
+  </style>
+
+  <div class="requiredDiv"></div>                                
+
+</apex:component>

@@ -1,0 +1,29 @@
+<apex:page id="page" standardController="Opportunity">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.lightningdesignsystem.com/assets/styles/slds.css"/>
+        
+    <style>
+            .msgIcon {
+                display: none!important
+            }
+            .customMessage * {
+                color: #fff!important
+            }
+            .customMessage {
+                margin: 5px 0!important;
+                max-width: 1280px;
+                opacity: 1!important;
+                width: 100%;
+                font-size: 12px;
+                border: 0px;
+                padding-left: 10px;
+            }
+            .message {
+                opacity: .1
+            }
+    </style>    
+    
+    <div class="slds-notify slds-notify--alert slds-theme--error  customMessage slds-theme--alert-texture">
+        You have to create Opportunity from Account page  !!
+    </div>
+</apex:page>

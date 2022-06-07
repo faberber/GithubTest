@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.FirstQuoteLoad}" />  
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="Size" type="Integer" default="0"/>
+
+   <!-- <aura:handler name="CreateModal" event="c:CreateModal" action="{!c.handleEvent2}"></aura:handler> -->
+    <aura:handler name="RefreshData" event="c:RefreshData" action="{!c.refreshData}"/>
+    <aura:handler name="DataSize" event="c:DataSize" action="{!c.DataSize}"/>
+
+
+    <div class="slds-box slds-theme--default slds-container_large">
+        <c:QuoteComponentHeaderPage aura:id="childComponentHeader" recordId="{!v.recordId}"  />
+        <c:QuoteComponentQuoteLineItemListPage aura:id="childComponent" recordId="{!v.recordId}" />
+        <c:ModalCreateQuoteLineItem/>
+        <c:QuoteLineItemEditAll/>
+        
+    </div>
+    
+    
+</aura:component>

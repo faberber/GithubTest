@@ -1,0 +1,534 @@
+<apex:page standardController="Opportunity" showHeader="false" renderAs="pdf"  extensions="OpportunityPDFClass"  docType="html-5.0" applyHtmlTag="false" applyBodyTag="false"> 
+	
+    <div class="header">
+        
+        <apex:image value="{!URLFOR($Resource.NetasLogoSmall)}"  style="float: left;"/> <br/><br/><br/><br/>  
+        <font size="3" color="black"> <b>Tarih :{!DAY(TODAY())}/{!MONTH(TODAY())}/{!YEAR(TODAY())}</b> </font>
+
+     
+   </div>
+     
+   <div  style="font-family: Arial Unicode MS; font-size: 14px ">
+       <br/>            
+       
+  <apex:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" columnClasses="left,right" border="3">    
+    <apex:outputPanel style="background-color:#A9E2F3;"> 
+        
+      <table id="OpportunityLines">
+        	 <td> 
+          			<tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    		<apex:panelGroup layout="block" style="width:100%;">
+                        		<apex:outputPanel style="background-color:#A9BCF5;" layout="block"> 
+                          		  <apex:outputText value="Müşteri Bilgisi"/>
+                        		</apex:outputPanel>
+                   			 </apex:panelGroup>
+                        </td>    
+                    </tr>
+             </td>
+          		<tr> 
+                  <td style="background-color:#8181F7;"> <apex:outputText value="MÜŞTERİ CARİ BİLGİSİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Name}"/></td>
+            	</tr> 
+          
+            	<tr> 
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="FATURA ADRESi"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Account.BillingStreet},{!Opportunity.Account.BillingCity},{!Opportunity.Account.BillingCountry}"  /></td>
+            	</tr>      
+                <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="VERGİ DAİRESİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Account.Tax_Office__c}" /></td>     
+                 </tr>
+          		 <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="VERGİ NUMARASI"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Account.Tax_Id__c}" /></td>     
+                 </tr>
+          		  <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="TELEFON"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Account.Phone}"/></td>     
+                 </tr> 	
+                <td style="background-color:#A9BCF5;">
+                    <tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    <apex:panelGroup layout="block" style="width:100%;">
+                        <apex:outputPanel style="background-color:#A9BCF5;" layout="block"> 
+                            <apex:outputText value="Ekipman Sipariş Bilgileri" />
+                        </apex:outputPanel>
+                    </apex:panelGroup>
+                        </td>    
+                    </tr>
+                </td>    
+          		<tr> 
+                  <td style="background-color:#8181F7;"> <apex:outputText value="PROJE TANIMI"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Name}"/></td>
+            	</tr> 
+              <tr> 
+                  <td style="background-color:#8181F7;"> <apex:outputText value="FIRSAT NO"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Opportunity_ID__c}"/></td>
+            	</tr> 
+            	<tr> 
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="MÜŞTERİ TEMSİLCİSİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Account.Owner.Name}"  /></td>
+            	</tr>      
+                <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="MÜŞTERİ ONAY MAİLİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="**Mail Attachment" /></td>     
+                 </tr>
+          		  <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="KİTLİST( KAR MERKEZLERİ, BİRİM MALİYET VE SATIŞ FİYATLARI )"/>&nbsp;&nbsp;&nbsp;
+                    </td >
+                    <td>  
+                     <table> 
+                      <apex:repeat value="{!OpportunityLines}" var="oli" id="theProdcutList" > 
+                       <tr>   
+                           <td class="header-data">
+                               <apex:outputText value="{!oli.Solution_Type__c}"/>&nbsp;
+                               <apex:outputText value="{!oli.UnitPrice}" />&nbsp;
+                               <apex:outputText value="{!oli.CurrencyIsoCode}" />
+                           </td>
+                       </tr>    
+                      </apex:repeat> 
+                     </table>
+                    </td>    
+                 </tr>
+          		 <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="SEGMENT"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Sales_Segment__r.Name}" /></td>     
+                 </tr>
+          		  <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="PAF/DCA(25K$ ÜSTÜ İÇİN 'WON' KONUMUNDA)"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="{!Opportunity.StageName}" /></td>     
+                 </tr>
+          		  <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="SATINALMADAN ALINAN MALİYET VE STOK BİLGİSİ"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data"><apex:outputText value="**Mail Attachment"/></td>     
+                 </tr>
+          		  <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="SEVKİYAT / FATURA PLANI"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                       <td class="header-data">
+                           <apex:outputText value="Teslimattan Faturalama" />&nbsp;|&nbsp; <!--( Opportunity Üstüne bir alan eklense daha mantıklı olur ) -->
+                           <apex:outputText value="Sözleşmeden Faturalama" />
+                      </td>	
+                 </tr>
+          		 <!-- <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="FATURA BİLGİLERİ"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data">
+                          <table> 
+                             <tr>
+                                 	<td>Vade</td>&nbsp;&nbsp; 
+            					 	<td>Fatura</td>&nbsp;&nbsp; 
+             						<td>Para Birimi</td>&nbsp;&nbsp; 
+             						<td>Öngörülen Ödeme Tarihi Tarihi</td>&nbsp;&nbsp;
+                             </tr>  
+                             <apex:repeat value="{!OpportunityVendorBillings}" var="VB" id="theVendorList" > 
+                               <tr>
+                                   <td>
+                                   		<apex:outputText value="{!VB.Due_Upon__c}"/>-
+                                  	 	<apex:outputText value="{!Opportunity.Company__c}"/>-
+                                  		<apex:outputText value="{!VB.CurrencyIsoCode}"/>-
+                                       	<apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!VB.Billing_Date__c}" /> 
+                                       	</apex:outputText>
+                                  </td>
+                               </tr>
+                              </apex:repeat>   
+                          </table>   
+                      </td>     
+                 </tr> -->
+          		 <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="SEVKİYAT ADRESİ VE İLGİLİ KİŞİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                      <td class="header-data">
+                          <apex:outputText value="{!Opportunity.Account.BillingStreet}"/>-
+                          <apex:outputText value="{!Opportunity.Account.BillingCity}"/>-
+                          <apex:outputText value="{!Opportunity.Account.BillingCountry}"/>
+                     </td>
+                 </tr>                 
+          
+          		<tr style="background-color:#A9BCF5;">
+                    <td colspan="5">
+          		 <apex:panelGroup layout="block" style="width:100%;" styleClass="highlightcol">
+        			<apex:outputPanel layout="block"> 
+                        <apex:outputText value="Hizmet Sipariş Bilgileri(Bakım, Eşeman, Kurulum Vs)" styleClass="highlightcol" />
+        			</apex:outputPanel>
+            	</apex:panelGroup>
+                    </td>    
+          		</tr>
+          
+          		<tr> 
+                  <td style="background-color:#8181F7;"> <apex:outputText value="PROJE TANIMI"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Name}"/></td>
+            	</tr>  
+            
+            	<tr> 
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="MÜŞTERİ TEMSİLCİSİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>
+                  <td class="header-data"><apex:outputText value="{!Opportunity.Account.Owner.Name}"  /></td>
+            	</tr>      
+                <tr>
+                  <td style="background-color:#8181F7;">
+                        <apex:outputText value="MÜŞTERİ ONAY MAİLİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="**Mail Attached" /></td>     
+                 </tr>
+          		  <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="PAF/DCA(25K$ ÜSTÜ İÇİN 'WON' KONUMUNDA)"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data"><apex:outputText value="{!Opportunity.StageName}"/></td>     
+                 </tr>
+          		  <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="SÖZLEŞME BAŞLANGIÇ, BİTİŞ TARİHİ"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data">
+                           <apex:outputText value="{0,date,dd/MM/yy}"> 
+                               <apex:param value="{!Opportunity.Contract_Date__c}" /> 
+                           </apex:outputText>
+                      </td>     
+                  </tr>
+          		  <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="SATIŞ FİYATI"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Total_Sales_Price__c} - {!Opportunity.CurrencyIsoCode} "/></td>     
+                 </tr>
+          		  <tr>
+                  <td style="background-color:#8181F7;">
+                      <apex:outputText value="PO BİLGİSİ( HİZMET SAĞLAYICI VE MALİYET )"/>&nbsp;&nbsp;&nbsp;
+                  </td>	
+                       <td class="header-data"><apex:outputText value="{!Opportunity.Account.Name} -- {!Opportunity.Total_Customer_Billings__c} - {!Opportunity.CurrencyIsoCode} " /></td>     
+                 </tr>
+                <!-- <tr>
+                    <td style="background-color:#8181F7;">
+                        <apex:outputText value="FATURA BİLGİLERİ"/>&nbsp;&nbsp;&nbsp;
+                    </td>
+                       <td class="header-data">
+                          <table>                          
+                               <apex:repeat value="{!OpportunityCustomerBillings}" var="CB" id="theCustomBillingList" > 
+                               <tr>
+                                   <td>
+                                   		<apex:outputText value="{!CB.Due_Upon_c__c}"/>-
+                                  	 	<apex:outputText value="{!Opportunity.Company__c}"/>-
+                                  		<apex:outputText value="{!CB.CurrencyIsoCode}"/>- 
+                                       	<apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!CB.Billing_Date__c}" /> 
+                                       	</apex:outputText>
+                                  </td>
+                               </tr>
+                              </apex:repeat>   
+                          </table>
+                      </td>     
+                 </tr> -->         		 
+        	 </table> 
+     	   </apex:outputPanel>
+       </apex:panelGrid> 
+       <div style="page-break-before:always"> </div>       
+       
+    <apex:panelGrid width="100%" cellpadding="0" cellspacing="0" columnClasses="left,right" border="3">    
+   	 	<apex:outputPanel style="background-color:#A9E2F3;"> 
+     	 	<table id="OpportunityLines">
+        	 	<td> 
+          			<tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    		<apex:panelGroup layout="block" style="width:100%;">
+                        		<apex:outputPanel style="background-color:#A9BCF5;" layout="block" > 
+                                   <div style="text-align:center"> 
+                          		 	 <apex:outputText value="Faturalama Planı"/>
+                                   </div>    
+                        		</apex:outputPanel>
+                   			 </apex:panelGroup>
+                        </td>    
+                    </tr>
+          		</td>
+          		<tr>
+                    <td style="background-color:#8181F7;">Faturalama Numarası</td>
+                    <td style="background-color:#8181F7;">Planlanan Faturalama Tarihi</td>
+             		<td style="background-color:#8181F7;">Planlanan Faturalama Tutarı</td> 
+             		<td style="background-color:#8181F7;">Para Birimi</td>
+          		</tr>	
+                       <td class="header-data">
+                                                    
+                               <apex:repeat value="{!OpportunityCustomerBillings}" var="CB" id="theCustomerBillingList" > 
+                               <tr>
+                                   <td>
+                                       <apex:outputText value="{!CB.Name}"/>
+                                   </td>
+                                   <td>
+                                        <apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!CB.Billing_Date__c}" /> 
+                                       	</apex:outputText>
+                                   </td> 
+                                   <td>
+                                   		<apex:outputText value="{!CB.N_Billing_Amount_USD__c}"/>
+                                   </td>
+                                   <td>
+                                  		<apex:outputText value="{!CB.CurrencyIsoCode}"/>                                       	
+                                  </td>
+                               </tr>
+                              </apex:repeat> 
+                              <tr style="background-color:#81F781;">
+                                  <td>
+                                      <apex:outputText value="Toplam"/>
+                                  </td>                                  
+                                  <td>
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.Sum_Of_Customer_Billings_USD__c}" />
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.CurrencyIsoCode}" />
+                                  </td>
+                              </tr>
+                          
+                      </td>          		 
+        	 </table> 
+     	   </apex:outputPanel>
+       </apex:panelGrid> 
+       
+       
+       <br/>
+       <br/>
+       <br/>
+    <apex:panelGrid width="100%" cellpadding="0" cellspacing="0" columnClasses="left,right" border="3" rendered="{!Opportunity.RecordType.DeveloperName != 'OPPORTUNITY_25K'}">    
+   	 	<apex:outputPanel style="background-color:#A9E2F3;"> 
+     	 	<table id="OpportunityLines">
+        	 	<td> 
+          			<tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    		<apex:panelGroup layout="block" style="width:100%;">
+                        		<apex:outputPanel style="background-color:#A9BCF5;" layout="block" > 
+                                   <div style="text-align:center"> 
+                          		 	 <apex:outputText value="Ödeme Planı"/>
+                                   </div>    
+                        		</apex:outputPanel>
+                   			 </apex:panelGroup>
+                        </td>    
+                    </tr>
+          		</td>
+          		<tr>
+                    <td style="background-color:#8181F7;">Ödeme Numarası</td>
+                    <td style="background-color:#8181F7;">Ödeme Vadesi</td>
+             		<td style="background-color:#8181F7;">Ödeme Tarihi</td> 
+             		<td style="background-color:#8181F7;">Ödeme Tutarı</td>
+                    <td style="background-color:#8181F7;">Para Birimi</td>
+          		</tr>	
+                       <td class="header-data">
+                                                    
+                               <apex:repeat value="{!OpportunityVendorBillings}" var="VB" id="theVendorBillingList" > 
+                               <tr>
+                                   <td>
+                                     <apex:outputText value="{!VB.Name}"/>
+                                   </td>
+                                   <td>
+                                       <apex:outputText value="{!VB.Due_Upon__c}"/>
+                                   </td>
+                                   <td>
+                                        <apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!VB.Billing_Date__c}" /> 
+                                       	</apex:outputText>
+                                   </td> 
+                                   <td>
+                                   		<apex:outputText value="{!VB.N_Billing_Amount_USD__c}"/>
+                                   </td>
+                                   <td>
+                                  		<apex:outputText value="{!VB.CurrencyIsoCode}"/>                                       	
+                                  </td>
+                               </tr>
+                              </apex:repeat> 
+                              <tr style="background-color:#81F781;">
+                                  <td>
+                                      <apex:outputText value="Toplam"/>
+                                  </td>
+                                  <td>
+                                  </td>
+                                  <td>
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.Sum_Of_Vendor_Billings_USD__c}" />
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.CurrencyIsoCode}" />
+                                  </td>
+                              </tr>
+                          
+                      </td>          		 
+        	 </table> 
+     	   </apex:outputPanel>
+       </apex:panelGrid> 
+       
+       <br/>
+       <br/>
+       <br/>
+    <apex:panelGrid width="100%" cellpadding="0" cellspacing="0" columnClasses="left,right" border="3" rendered="{!Opportunity.RecordType.DeveloperName != 'OPPORTUNITY_25K'}">    
+   	 	<apex:outputPanel style="background-color:#A9E2F3;"> 
+     	 	<table id="OpportunityLines">
+        	 	<td> 
+          			<tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    		<apex:panelGroup layout="block" style="width:100%;">
+                        		<apex:outputPanel style="background-color:#A9BCF5;" layout="block" > 
+                                   <div style="text-align:center"> 
+                          		 	 <apex:outputText value="Maliyet Planı"/>
+                                   </div>    
+                        		</apex:outputPanel>
+                   			 </apex:panelGroup>
+                        </td>    
+                    </tr>
+          		</td>
+          		<tr>
+                    <td style="background-color:#8181F7;">Maliyet Numarası</td>
+                    <td style="background-color:#8181F7;">Vendor</td>
+             		<td style="background-color:#8181F7;">Maliyet Oluşturma Tarihi</td> 
+             		<td style="background-color:#8181F7;">Maliyet Tutarı</td>
+                    <td style="background-color:#8181F7;">Para Birimi</td>
+          		</tr>	
+                       <td class="header-data">
+                                                    
+                               <apex:repeat value="{!OpportunityExpenses}" var="EXP" id="theExpenseList" > 
+                               <tr>
+                                   <td>
+                                       <apex:outputText value="{!EXP.Name}"/>
+                                   </td>
+                                   <td>
+                                   		<apex:outputText value="{!EXP.Vendor__r.Name}"/>
+                                   </td>
+                                   <td>
+                                        <apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!EXP.Date__c}" /> 
+                                       	</apex:outputText>
+                                   </td> 
+                                   <td>
+                                   		<apex:outputText value="{!EXP.Amount__c}"/>
+                                   </td>
+                                   <td>
+                                  		<apex:outputText value="{!EXP.CurrencyIsoCode}"/>                                       	
+                                  </td>
+                               </tr>
+                              </apex:repeat> 
+                              <tr style="background-color:#81F781;">
+                                  <td>
+                                      <apex:outputText value="Toplam"/>
+                                  </td>
+                                  <td>
+                                  </td>
+                                  <td>
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.Sum_Of_Payments_USD__c}" />
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.CurrencyIsoCode}" />
+                                  </td>
+                              </tr>
+                          
+                      </td>          		 
+        	 </table> 
+     	   </apex:outputPanel>
+       </apex:panelGrid> 
+       
+       
+       <br/>
+       <br/>
+       <br/>
+    <apex:panelGrid width="100%" cellpadding="0" cellspacing="0" columnClasses="left,right" border="3">    
+   	 	<apex:outputPanel style="background-color:#A9E2F3;"> 
+     	 	<table id="OpportunityLines">
+        	 	<td> 
+          			<tr style="background-color:#A9BCF5;">
+                        <td colspan="5">
+                    		<apex:panelGroup layout="block" style="width:100%;">
+                        		<apex:outputPanel style="background-color:#A9BCF5;" layout="block" > 
+                                   <div style="text-align:center"> 
+                          		 	 <apex:outputText value="Gelir Planı"/>
+                                   </div>    
+                        		</apex:outputPanel>
+                   			 </apex:panelGroup>
+                        </td>    
+                    </tr>
+          		</td>
+          		<tr>
+                    <td style="background-color:#8181F7;">Gelir Numarası</td>
+                    <td style="background-color:#8181F7;">Tarih</td>
+             		<td style="background-color:#8181F7;">Tutar</td>
+                    <td style="background-color:#8181F7;">Para Birimi</td>
+          		</tr>	
+                       <td class="header-data">
+                                                    
+                               <apex:repeat value="{!OpportunityCollections}" var="COL" id="theCollectionList" > 
+                               <tr>
+                                   <td>
+                                   		<apex:outputText value="{!COL.Name}"/>
+                                   </td>
+                                   <td>
+                                        <apex:outputText value="{0,date,dd/MM/yy}"> 
+                                        	<apex:param value="{!COL.Revenue_Date__c}" /> 
+                                       	</apex:outputText>
+                                   </td> 
+                                   <td>
+                                   		<apex:outputText value="{!COL.Revenue_Amount__c}"/>
+                                   </td>
+                                   <td>
+                                  		<apex:outputText value="{!COL.CurrencyIsoCode}"/>                                       	
+                                  </td>
+                               </tr>
+                              </apex:repeat> 
+                              <tr style="background-color:#81F781;">
+                                  <td>
+                                      <apex:outputText value="Toplam"/>
+                                  </td>
+                                  <td>
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.Sum_Of_Collections_USD__c}" />
+                                  </td>
+                                  <td>
+                                      <apex:outputText value="{!Opportunity.CurrencyIsoCode}" />
+                                  </td>
+                              </tr>
+                          
+                      </td>          		 
+        	 </table> 
+     	   </apex:outputPanel>
+       </apex:panelGrid> 
+       
+        <!-- </apex:repeat> -->       
+      <!-- <div style="page-break-before:always"> </div>  -->           
+    </div>
+    <!-- last PAGE footer-->
+       <!-- <div class="footer" >
+           <table style="font-family: Arial Unicode MS; font-size:12px; float:centre">             
+                      
+                    <tr><td>Footer Bilgi</td></tr>               
+           </table>
+    	</div>-->
+</apex:page>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>37.0</apiVersion>
+    <availableInTouch>true</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;apex:page sidebar=&quot;false&quot; showHeader=&quot;false&quot; &gt;
+ &lt;apex:iframe src=&quot;https://netas.my.salesforce.com/01Z580000006C4y?isdtp=vw&quot; scrolling=&quot;true&quot; id=&quot;theIframe&quot;/&gt;
+&lt;/apex:page&gt;</description>
+    <label>DB_CLEVEL</label>
+</ApexPage>

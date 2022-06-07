@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION">
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="display" type="Boolean" default="false"/>
+</aura:event>

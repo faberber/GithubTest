@@ -1,0 +1,36 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" >
+    <aura:registerevent name="CreateModal" type="c:CreateModal"/>
+    <aura:registerevent name="EditModal" type="c:EditModal"/>
+
+    <aura:method name="dataSize" action="{!c.dataSize}" access="public">
+    <aura:attribute name="Size" type="Integer" default="0"/>
+    </aura:method>
+    <aura:attribute name="displaySize" type="Integer" default="0"/>
+
+    <aura:attribute name="recordId" type="Id"/>
+	 <lightning:layout class="slds-page-header slds-page-header--object-home">
+            <lightning:layoutItem>
+                <lightning:icon iconName="standard:quotes" alternativeText="Quote Line Items"/>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="horizontal-small">
+                <div class="page-section page-header">
+                    <h1 class="slds-text-heading--label">Quote Line Items</h1>
+                    <h2 class="slds-text-heading--medium">New Quote Line Item ({!v.displaySize})</h2>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem alignmentBump="left">
+                <div style="margin-right:0px; margin-left:auto; align:right;">
+                    <lightning:buttonStateful class="align:right;" 
+                                              labelWhenOff="Add Products"
+                                              iconNameWhenOff="utility:add"
+                                              onclick="{!c.Displaycreate}"        
+                                              />
+                    <lightning:buttonStateful class="align:right;" 
+                                              labelWhenOff="Edit Products"
+                                              iconNameWhenOff="utility:edit"
+                                              onclick="{!c.DisplayALLeditmodal}"        
+                                              />
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+</aura:component>

@@ -1,0 +1,137 @@
+<apex:page standardController="CV__c" extensions="CVEditPageController" lightningStylesheets="true">
+    <apex:form >  
+        <apex:pageBlock >              
+            <apex:pageMessages id="msgId"/>
+            <center>                   
+                <apex:commandButton value="{!$Label.BackButton}" action="{!URLFOR($Action.CV__c.view, Cv.id)}"/>
+                <div class="float-button">
+                <apex:commandButton action="{!Cvupdate}" value="Update" styleClass="buton"/>  
+                </div>
+            </center>
+            <apex:pageBlockSection title="{!$Label.Information}" >
+                <apex:outputField value="{!Cv.First_Name__c}" />
+                <apex:outputField value="{!Cv.Last_Name__c}" />
+                <apex:outputField value="{!Cv.Birthday__c}" />
+                <apex:outputField value="{!Cv.E_Mail__c}" />
+                <apex:outputField value="{!Cv.Web_Site__c}" />
+                <apex:outputField value="{!Cv.Maried_Status__c}" />
+                <apex:outputField value="{!Cv.Millitary__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="School Information" columns="1" collapsible="true"  >
+                <apex:commandButton action="{!addSchool}" value="Add School Information" styleclass="butonadd" />
+                <apex:commandButton value="Delete Selected" action="{!CvInfoSCDelete}" styleclass="butonadd"/>
+                <p></p> 
+                <apex:pageBlockTable value="{!schoolInformationCheckboxList}" var="sc" rendered="{!IF(schoolInformationCheckboxList.size>0,true,false)}" >
+                    <apex:column headerValue="School Name">
+                        <apex:inputField value="{!sc.cvSchoolInfo.School_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="School Type">
+                        <apex:inputField value="{!sc.cvSchoolInfo.School_Type__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="City">
+                        <apex:inputField value="{!sc.cvSchoolInfo.City__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Graduated Status">
+                        <apex:inputField value="{!sc.cvSchoolInfo.Graduated_Status__c}"/>
+                    </apex:column>                
+                    <apex:column headerValue="Grade Average">
+                        <apex:inputField value="{!sc.cvSchoolInfo.Grade_Average__c}"/>
+                    </apex:column> 
+                    <apex:column headerValue="Select">
+                        <apex:inputCheckbox value="{!sc.selected}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.Company_Information}" columns="1" collapsible="true">
+                <apex:commandButton action="{!addCompany}" value="Add Company Information" styleclass="butonadd"/>
+                <apex:commandButton value="Delete Selected" action="{!CvInfoCDelete}" styleclass="butonadd"/>
+                
+                <p></p>
+                <apex:pageBlockTable value="{!companyInformationCheckboxList}" var="c"  rendered="{!IF(companyInformationCheckboxList.size>0,true,false)}">
+                    <apex:column headerValue="Last Worked Company Name">
+                        <apex:inputField value="{!c.cvCompanyInfo.Last_Worked_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Position in The Last Company">
+                        <apex:inputField value="{!c.cvCompanyInfo.Position_in_The_Last_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Department">
+                        <apex:inputField value="{!c.cvCompanyInfo.Department__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Year">
+                        <apex:inputField value="{!c.cvCompanyInfo.Years__c}"/>
+                    </apex:column>        
+                    <apex:column headerValue="Select">
+                        <apex:inputCheckbox value="{!c.selected}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection> 
+            <apex:pageBlockSection title="{!$Label.Certificate_Information}" columns="1" collapsible="true" >
+                <apex:commandButton action="{!addCertificate}" value="Add Certificate Information" styleclass="butonadd"/>
+                <apex:commandButton value="Delete Selected" action="{!CvInfoCerDelete}" styleclass="butonadd"/>
+                
+                <p></p>
+                <apex:pageBlockTable value="{!certificateInformationCheckboxList}" var="cer"  rendered="{!IF(certificateInformationCheckboxList.size>0,true,false)}" >
+                    <apex:column headerValue="Certificate Name">
+                        <apex:inputField value="{!cer.cvCertificateInfo.Certificate_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Level">
+                        <apex:inputField value="{!cer.cvCertificateInfo.Level__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Institution">
+                        <apex:inputField value="{!cer.cvCertificateInfo.Institution__c}"/>
+                    </apex:column>     
+                    <apex:column headerValue="Select">
+                        <apex:inputCheckbox value="{!cer.selected}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+     <style>
+        .float-button { 
+        position: fixed;
+        bottom:10px;
+        width: 100%; 
+        z-index:1 !important;
+        }
+        .buton{ 
+        color:white !important;
+        background:rgba(27, 82, 151, 1) !important;
+        z-index:1 !important;
+        } 
+        .butonadd{ 
+        float: right !important;
+        z-index:2 !important;
+        
+        }
+          .butonn{ 
+        float: right !important;
+        z-index:2 !important;
+        
+        }
+        .butonadd:hover{ 
+        background:rgba(27, 82, 151, 1)  !important;
+        color:white !important;
+        text-decoration: none !important;
+        outline: 0 !important;
+        -webkit-transition: background 300ms ease-in !important;
+        -moz-transition: background 300ms ease-in !important;
+        -o-transition: background 300ms ease-in !important;
+        -webkit-transition: color 300ms ease-in !important;
+        -moz-transition: color 300ms ease-in !important;
+        -o-transition: color 300ms ease-in !important;
+        }
+        .buton:hover {
+        background: white !important;
+        color:rgba(27, 82, 151, 1) !important;
+        text-decoration: none !important;
+        outline: 0 !important;
+        -webkit-transition: background 300ms ease-in !important;
+        -moz-transition: background 300ms ease-in !important;
+        -o-transition: background 300ms ease-in !important;
+        -webkit-transition: color 300ms ease-in !important;
+        -moz-transition: color 300ms ease-in !important;
+        -o-transition: color 300ms ease-in !important;
+        }
+    </style>
+</apex:page>

@@ -1,0 +1,474 @@
+<apex:page standardController="opportunity" extensions="BFormsSheet2" action="{!init}" showHeader="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="https://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <meta charset="utf-8"/>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS104, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <title>B Forms</title>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                $("td").each(function(){
+                    if( $(this).text() == 0 ){
+                        $(this).text('');
+                    }
+                    if( $(this).text() != '' && parseFloat ( $(this).text() ) < 0 ){
+                        $(this).css('color','red');
+                    }
+                });
+                showHide('inflow');
+                showHide('outflow');
+                overridePageMessages();
+            });
+            
+            function showHide(classname){
+                $('.' + classname).each(function(){
+                    if( $(this).css("display") == 'none' ){
+                        $(this).css("display","");
+                    }
+                    else{
+                        $(this).css("display","none");
+                    }
+                });
+            }
+            
+            function overridePageMessages(){    
+                var textureEffect = '';
+                //Uncomment below line for texture effect on page messages
+                //textureEffect = 'slds-theme--alert-texture';
+                             
+                $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);          
+                $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);    
+                $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);                  
+                $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);    
+                                 
+                $('.errorM3').removeClass('errorM3'); 
+                $('.confirmM3').removeClass('confirmM3'); 
+                $('.infoM3').removeClass('infoM3');   
+                $('.warningM3').removeClass('warningM3');  
+            }
+        </script>
+        
+        <style>
+            .tbl td{
+                padding:2px;
+            }
+            .msgIcon {
+                display: none!important
+            }
+            .customMessage * {
+                color: #fff!important
+            }
+            .customMessage {
+                margin: 5px 0!important;
+                max-width: 1280px;
+                opacity: 1!important;
+                width: 100%;
+                font-size: 12px;
+                border: 0px;
+                padding-left: 10px;
+            }
+            .message {
+                opacity: .1
+            }
+        </style>
+            
+    </head>
+    
+    <body>
+        <apex:form >
+            <div class="slds">
+                <!-- Header Starts -->
+                <div class="slds-page-header" role="banner">
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                        <use xlink:href="{!URLFOR($Resource.SLDS104, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                      </svg>
+                    </div>
+                    <div class="slds-media__body">
+                        <table>
+                            <tr>
+                                <td style="width: 30%;">
+                                    <p class="slds-page-header__title slds-truncate slds-align-middle" title="">Cash Flow (Monthly)</p>
+                                    <p class="slds-text-body--small slds-page-header__info">Opportunity</p>
+                                </td>
+                                <td>
+                                    <div class="slds-tabs--default" style="width: 35% !important;">
+                                        <ul class="slds-tabs--default__nav" role="tablist">
+                                            <li class="slds-tabs--default__item slds-text-heading--label slds-active" title="Month" role="presentation"><a href="/apex/BFormsSheet2?id={!oppId}" class="slds-tabs--default__link">Month</a></li>
+                                            <li class="slds-tabs--default__item slds-text-heading--label" title="Quarter" role="presentation"><a href="/apex/BFormsSheet2Quarter?id={!oppId}" class="slds-tabs--default__link">Quarter</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom">
+                      <div class="slds-button-group" role="group">
+                        <apex:commandButton value="Back" action="/{!oppId}" styleClass="slds-button slds-button--neutral"/>
+                        <apex:commandButton value="Export to Excel" action="/apex/BFormsSheet2Excel?id={!oppid}" styleClass="slds-button slds-button--neutral"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Header Ends -->
+                
+                <div align="center">
+                    <apex:pageMessages />
+                </div>
+                
+                <div style="padding: 10px;">
+                    
+                    
+                </div>
+                
+                <div class="slds-card__body slds-scrollable--x">
+                    <table class="tbl slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover" style="width:100%;margin-top: 4%;" border="1" cellspacing="0">
+                        <tr>
+                            <td></td>
+                            <td rowspan="2" align="center" style="font-weight: 600;text-align: center;">Total</td>
+                            <apex:repeat value="{!yearMonth}" var="ymk">
+                                <td colspan="{! yearMonth[ymk][0].TotalSize}" align="center" style="font-weight: 600;text-align: center;">{!ymk}</td>
+                            </apex:repeat>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <apex:repeat value="{!yearMonth}" var="ymk">
+                                <apex:repeat value="{!yearMonth[ymk]}" var="ym">
+                                    <td align="center" style="font-weight: 600;text-align: center;">{!ym.months}</td>
+                                </apex:repeat>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td><b>Order</b></td>
+                            <td align="right">
+                                <b>
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!oppObj.Amount}" />
+                                     </apex:outputText>
+                                </b>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr style="background: #F1EDED;">
+                            <td style="cursor:pointer;" onclick="showHide('inflow');"><b>INFLOW</b></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfInFlowInvoiceAdvance[keyStr] + mapOfInFlowInvoiceInvoicingCollection[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr class="inflow">
+                            <td>&nbsp;&nbsp;&nbsp;<b>Invoicing</b></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfInFlowInvoicing[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr class="inflow">
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Advance</td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfInFlowInvoiceAdvance[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        <tr class="inflow">
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collection</td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfInFlowInvoiceInvoicingCollection[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td style="height: 15px;"></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr style="background: #F1EDED;">
+                            <td style="cursor:pointer;" onclick="showHide('outflow');"><b>OUTFLOW</b></td>
+                            <td align="right">
+                                <apex:variable var="i1" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:variable var="i1" value="{!i1 + mapOfOutFlowPayment[keyStr]+mapOfOutFlowOtherCOS[keyStr]+oppObj.Indirect_COS_Amount__c/totalMoths }"/>
+                                </apex:repeat>
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!i1}" />
+                                 </apex:outputText>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!mapOfOutFlowPayment[keyStr] + mapOfOutFlowOtherCOS[keyStr] + ( oppObj.Indirect_COS_Amount__c/totalMoths ) }" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr class="outflow">
+                            <td>&nbsp;&nbsp;&nbsp;<b>Invoicing</b></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfOutFlowInvoice[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <apex:repeat value="{!mapOfOutFlowInvoiceLst}" var="lstMap">
+                            <tr class="outflow">
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:outputPanel layout="block" rendered="{! lstMap[keyStr]['name'] != '' }">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!lstMap[keyStr]['name']}</td>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                                <td></td>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <td align="right">
+                                        <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!lstMap[keyStr]['Billing_Amount__c']}" />
+                                 </apex:outputText>
+                                    </td>
+                                </apex:repeat>
+                            </tr>
+                        </apex:repeat>
+                        
+                        <tr class="outflow">
+                            <td>&nbsp;&nbsp;&nbsp;<b>Payment</b></td>
+                            <td align="right">
+                                <apex:variable var="i2" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:variable var="i2" value="{! i2 + mapOfOutFlowPayment[keyStr] +  mapOfOutFlowOtherCOS[keyStr] + ( oppObj.Indirect_COS_Amount__c/totalMoths ) }"/>
+                                </apex:repeat>
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!i2}" />
+                                 </apex:outputText>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfOutFlowPayment[keyStr] + mapOfOutFlowOtherCOS[keyStr] + ( oppObj.Indirect_COS_Amount__c/totalMoths ) }" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <apex:repeat value="{!mapOfOutFlowPaymentLst}" var="lstMap">
+                            <tr class="outflow">
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:outputPanel layout="block" rendered="{! lstMap[keyStr]['name'] != '' }">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!lstMap[keyStr]['name']}</td>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                                <td></td>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <td align="right">
+                                        <apex:outputText value="{0, number, #,###,###.00}">
+                                               <apex:param value="{!lstMap[keyStr]['Amount__c']}" />
+                                         </apex:outputText>
+                                    </td>
+                                </apex:repeat>
+                            </tr>
+                        </apex:repeat>
+                        
+                        
+                        <tr class="outflow">
+                            <td>&nbsp;&nbsp;&nbsp;<b>Other CoS</b></td>
+                            <td align="right">
+                                <apex:variable var="i3" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:variable var="i3" value="{! i3 + mapOfOutFlowOtherCOS[keyStr] }"/>
+                                </apex:repeat>
+                                {!i3}
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfOutFlowOtherCOS[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <apex:repeat value="{!mapOfOutFlowOtherCOSLst}" var="lstMap">
+                            <tr class="outflow">
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:outputPanel layout="block" rendered="{! lstMap[keyStr]['name'] != '' }">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{!lstMap[keyStr]['name']}</td>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                                <td></td>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <td align="right">
+                                        <apex:outputText value="{0, number, #,###,###.00}">
+                                               <apex:param value="{!lstMap[keyStr]['Amount__c']}" />
+                                         </apex:outputText>
+                                    </td>
+                                </apex:repeat>
+                            </tr>
+                        </apex:repeat>
+                        
+                        <tr class="outflow">
+                            <td>&nbsp;&nbsp;&nbsp;<b>Indirect CoS</b></td>
+                            <td>
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!oppObj.Indirect_COS_Amount__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!oppObj.Indirect_COS_Amount__c/totalMoths}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr class="outflow">
+                            <td style="height:15px;"></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        <tr>
+                            <td style="height:15px;"></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr style="background: #F1EDED;font-size: 13px;">
+                            <td><b>NET CASH</b></td>
+                            <td>
+                                <apex:variable var="outflw" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:variable var="outflw" value="{! outflw + mapOfOutFlowPayment[keyStr]+mapOfOutFlowOtherCOS[keyStr]+oppObj.Indirect_COS_Amount__c/totalMoths}"/>
+                                </apex:repeat>
+
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!oppObj.Amount - outflw - oppObj.Indirect_COS_Amount__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{! (mapOfInFlowInvoiceAdvance[keyStr] + mapOfInFlowInvoiceInvoicingCollection[keyStr]) - ( mapOfOutFlowPayment[keyStr] + mapOfOutFlowOtherCOS[keyStr] + ( oppObj.Indirect_COS_Amount__c/totalMoths ) ) }" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr style="background: #F1EDED;font-size: 13px;">
+                            <td><b>CUMULATIVE CASH</b></td>
+                            <td align="right">
+                                <!--<apex:variable var="i4" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:variable var="i4" value="{! i4 + mapOfCumulativeCash[keyStr] }"/>
+                                </apex:repeat>
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!i4}" />
+                                 </apex:outputText>-->
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0, number, #,###,###.00}">
+                                           <apex:param value="{!mapOfCumulativeCash[keyStr]}" />
+                                     </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td style="height:15px;"></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td style="color:red;">&nbsp;&nbsp;&nbsp;<b>Finance Cost</b></td>
+                            <td align="right">
+                                <apex:variable var="i4" value="{!0}"/>
+                                <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                    <apex:outputPanel layout="block" rendered="{! (mapOfCumulativeCash[keyStr] * 12) / (360*30)  < 0 }">
+                                        <apex:variable var="i4" value="{! i4 + (mapOfCumulativeCash[keyStr] * 12) / (360*30)  }"/>
+                                    </apex:outputPanel>
+                                </apex:repeat>
+                                
+                                <apex:outputText value="{0,number,###,###,###,##0.##}">
+                                    <apex:param value="{!i4}"/>
+                                </apex:outputText>
+                            </td>
+                            
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td align="right">
+                                    <apex:outputText value="{0,number,###,###,###,##0.##}" rendered="{! (mapOfCumulativeCash[keyStr] * 12) / (360*30) < 0 }">
+                                        <apex:param value="{! (mapOfCumulativeCash[keyStr] * 12) / (360*30) }"/>
+                                    </apex:outputText>
+                                </td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td style="height:15px;"></td>
+                            <td></td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                        
+                        <tr>
+                            <td style="height:15px;"><b>IRR</b></td>
+                            <td>
+                                <apex:outputText value="{0, number, #,###,###.00}">
+                                       <apex:param value="{!IRRcal}" />
+                                 </apex:outputText>
+                            </td>
+                            <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                                <td></td>
+                            </apex:repeat>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <iframe src="/apex/BFormGraph?id={!oppid}" style="height: 900px;width: 100%;border-width: 0px;"/>
+                </div>
+            </div>
+        </apex:form>
+    </body>
+</html>
+</apex:page>

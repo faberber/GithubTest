@@ -1,0 +1,87 @@
+<apex:page standardController="Applier_Form__c" extensions="ApplierFormExtensions" lightningStylesheets="true">
+    <apex:pageBlock >
+        <apex:form > 
+            
+            <center> <h3>{!Applier_Form__c.First_Name_Last_Name__c} Applier Form</h3></center>
+            
+        </apex:form>
+        <apex:pageBlockSection title="{!$Label.Information}" >
+            <apex:outputField value="{!Applier_Form__c.First_Name_Last_Name__c}"/>  
+            <apex:outputField value="{!Applier_Form__c.Gender__c}"/>    
+            <apex:outputField value="{!Applier_Form__c.Military__c}"/>   
+            <apex:outputField value="{!Applier_Form__c.Appiler_Status__c}"/>    
+            <apex:outputField value="{!Applier_Form__c.CV__c}"/>  
+        </apex:pageBlockSection> 
+        <apex:pageBlockSection title="{!$Label.SchoolInformation}" columns="1" collapsible="true" rendered="{!IF(CvInformationListSchool.size>0,true,false)}">
+            <apex:pageBlockTable value="{!CvInformationListSchool}" var="CvInformationSchool"  >
+                <apex:column headerValue="School Name">
+                    <apex:outputField value="{!CvInformationSchool.School_Name__c}"/>
+                </apex:column>
+                <apex:column headerValue="School Type">
+                    <apex:outputField value="{!CvInformationSchool.School_Type__c}"/>
+                </apex:column>
+                <apex:column headerValue="City">
+                    <apex:outputField value="{!CvInformationSchool.City__c}"/>
+                </apex:column>
+                <apex:column headerValue="Graduated Status">
+                    <apex:outputField value="{!CvInformationSchool.Graduated_Status__c}"/>
+                </apex:column>                
+                <apex:column headerValue="Grade Average">
+                    <apex:outputField value="{!CvInformationSchool.Grade_Average__c}"/>
+                </apex:column> 
+            </apex:pageBlockTable>  
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.Company_Information}" columns="1" collapsible="true" rendered="{!IF(CvInformationListCompany.size>0,true,false)}" >
+            <apex:pageBlockTable value="{!CvInformationListCompany}" var="CvInformationCompany"  >
+                <apex:column headerValue="Last Worked Company Name">
+                    <apex:outputField value="{!CvInformationCompany.Last_Worked_Company__c}"/>
+                </apex:column>
+                <apex:column headerValue="Position in The Last Company">
+                    <apex:outputField value="{!CvInformationCompany.Position_in_The_Last_Company__c}"/>
+                </apex:column>
+                <apex:column headerValue="Department">
+                    <apex:outputField value="{!CvInformationCompany.Department__c}"/>
+                </apex:column>
+                <apex:column headerValue="Year">
+                    <apex:outputField value="{!CvInformationCompany.Years__c}"/>
+                </apex:column>                              
+            </apex:pageBlockTable> 
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.Certificate_Information}" columns="1" collapsible="true" rendered="{!IF(CvInformationListCertificate.size>0,true,false)}">
+            <apex:pageBlockTable value="{!CvInformationListCertificate}" var="CvInformationCertificate"   >
+                <apex:column headerValue="Certificate Name">
+                    <apex:outputField value="{!CvInformationCertificate.Certificate_Name__c}"/>
+                </apex:column>
+                <apex:column headerValue="Level">
+                    <apex:outputField value="{!CvInformationCertificate.Level__c}"/>
+                </apex:column>
+                <apex:column headerValue="Institution">
+                    <apex:outputField value="{!CvInformationCertificate.Institution__c}"/>
+                </apex:column>                            
+            </apex:pageBlockTable> 
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    <style>
+        
+        .butonadd{ 
+        float: left !important;
+        z-index:2 !important;
+        
+        }
+        
+        .butonadd:hover{ 
+        background:rgba(27, 82, 151, 1)  !important;
+        color:white !important;
+        text-decoration: none !important;
+        outline: 0 !important;
+        -webkit-transition: background 300ms ease-in !important;
+        -moz-transition: background 300ms ease-in !important;
+        -o-transition: background 300ms ease-in !important;
+        -webkit-transition: color 300ms ease-in !important;
+        -moz-transition: color 300ms ease-in !important;
+        -o-transition: color 300ms ease-in !important;
+        }
+        
+        
+    </style>
+</apex:page>

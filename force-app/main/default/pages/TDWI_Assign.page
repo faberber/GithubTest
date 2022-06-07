@@ -1,0 +1,6 @@
+<apex:page standardController="TD_Work_Item__c" showHeader="false"  sidebar="false" applyHtmlTag="false" applyBodyTag="false">
+    <flow:interview name="Assign_TDWI" finishLocation="{!URLFOR($Action.TD_Work_Item__c.Tab, $ObjectType.TD_Work_Item__c)}">
+    <apex:param name="TDWIId" value="{!TD_Work_Item__c.Id}"/>
+    <apex:param name="SubQueueId" value="{!TD_Work_Item__c.SubQueue__c}"/>
+    </flow:interview>
+</apex:page>

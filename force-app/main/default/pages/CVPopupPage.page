@@ -1,0 +1,538 @@
+<apex:page standardController="CV__c" extensions="CVPopupPageController" lightningStylesheets="true">
+    <apex:slds />
+    <apex:form >  
+        <apex:pageBlock >
+            <center> 
+                <div class="float-button">
+                    <apex:commandButton rendered="{!IF(Cv.Id!=null,true,false)}" value="Display CV" action="{!URLFOR($Action.CV__c.view, Cv.id)}"/>
+                    <apex:pageMessages id="SaveError" rendered="{!IF(goster!=6,false,true)}" />
+                </div>
+            </center>
+            
+            <apex:pageBlockSection id="info" title="{!$Label.Information}"  columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel styleclass="butonadd" value="Image Upload" for="image"  rendered="{!IF(file.Id!=null,false,IF(goster!=6,true,false))}"></apex:outputLabel>
+                    <apex:inputFile id="image"  fileName="{!ImageProfil.Name}" value="{!ImageProfil.body}"  rendered="{!IF(file.Id!=null,false,IF(goster!=6,true,false))}"></apex:inputFile>
+                </apex:pageBlockSectionItem> 
+                <apex:pageBlockSectionItem >
+                    <apex:image id="imagedisplay" styleclass="float-button" url="/servlet/servlet.FileDownload?file={!file.Id}" width="60" height="55" rendered="{!IF(file.Id==null,false,true)}"/>
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Cv.First_Name__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!Cv.Last_Name__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Cv.Birthday__c}" /> 
+                <apex:pageBlockSectionItem >            
+                    <apex:inputField value="{!Cv.E_Mail__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Cv.Web_Site__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!Cv.Maried_Status__c}" />
+                </apex:pageBlockSectionItem>
+                <apex:inputField value="{!Cv.Gender__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:inputField value="{!Cv.Millitary__c}" />
+                </apex:pageBlockSectionItem>
+                <p/>
+            </apex:pageBlockSection> 
+            <center> 
+                <div class="float-button">
+                    <apex:commandButton action="{!save}" value="Save" styleClass="slds-button_brand butonsave" />
+                </div>
+            </center>
+            <!-- CERTIFICATE LİST -->
+            <apex:variable value="{!0}" var="index"/>
+            <apex:pageBlockSection id="CertificateSection" title="{!$Label.Certificate_Information}" columns="1" collapsible="true"  > 
+                <apex:commandButton value="Add Certificate" styleclass="butonadd" action="{!showCertificatePopup}"/>
+                <apex:pageBlockTable id="CertificateTable" value="{!CvInformationListCertificate}" var="CvInformationCertificate" rendered="{!IF(CvInformationListCertificate.size>0,true,false)}">
+                    <apex:column style="text-align:right !important; align:right !important;" headerValue="Edit/Delete">
+                        <apex:commandButton value="Edit" styleclass="butonedit" action="{!certificateEditButton}" image="{!$Resource.editPng}"  style="width:50px; height:30px;"  rerender="CertificateTable,test" onclick="changeDisplay();" >
+                            <apex:param name="MS_Item" assignTo="{!MS_Item}" value="{!CvInformationCertificate.Id}" />
+                        </apex:commandButton>
+                        <apex:commandButton value="Delete" styleclass="butonedit" status="status"  rerender="CertificateTable" style="width:50px; height:30px;" image="{!$Resource.deleteSvg}" onclick="changeDisplay2();"  >
+                            <apex:param name="MS_Item2" value="{!CvInformationCertificate.Id}" assignTo="{!MS_Item2}" />
+                        </apex:commandButton>
+                    </apex:column> 
+                    <apex:column headerValue="Number"> 
+                        <apex:variable var="index" value="{!index + 1}"/>
+                        <apex:outputLabel value="{!index}"/>
+                    </apex:column>
+                    <apex:column headerValue="Certificate Name">
+                        <apex:outputField value="{!CvInformationCertificate.Certificate_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Level">
+                        <apex:outputField value="{!CvInformationCertificate.Level__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Institution">
+                        <apex:outputField value="{!CvInformationCertificate.Institution__c}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <!-- SCHOOL LİST -->
+            <apex:variable value="{!0}" var="index2sc"/>
+            <apex:pageBlockSection id="schoolSection" title="School Information" columns="1" collapsible="true"  > 
+                <apex:commandButton value="Add school" styleclass="butonadd" action="{!showSchoolPopup}"/>
+                <apex:pageBlockTable id="schoolTable" value="{!CvInformationListSchool}" var="CvInformationSchool" rendered="{!IF(CvInformationListSchool.size>0,true,false)}">
+                    <apex:column style="text-align:right !important; align:right !important;" headerValue="Edit/Delete">
+                        <apex:commandButton value="Edit" styleclass="butonedit" action="{!SchoolEditButton}" image="{!$Resource.editPng}"  style="width:50px; height:30px;"  rerender="schoolTable,School" onclick="changeDisplay1();" >
+                            <apex:param name="MS_Itemsc" assignTo="{!MS_Itemsc}" value="{!CvInformationSchool.Id}" />
+                        </apex:commandButton>
+                        <apex:commandButton value="Delete" styleclass="butonedit" status="status"  rerender="schoolTable" style="width:50px; height:30px;" image="{!$Resource.deleteSvg}" onclick="changeDisplay5();"  >
+                            <apex:param name="MS_Item2sc" value="{!CvInformationSchool.Id}" assignTo="{!MS_Item2sc}" />
+                        </apex:commandButton>
+                    </apex:column> 
+                    <apex:column headerValue="Number"> 
+                        <apex:variable var="index2sc" value="{!index2sc + 1}"/>
+                        <apex:outputLabel value="{!index2sc}"/>
+                    </apex:column>
+                    <apex:column headerValue="School Name">
+                        <apex:outputField value="{!CvInformationSchool.School_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="School Type">
+                        <apex:outputField value="{!CvInformationSchool.School_Type__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="City">
+                        <apex:outputField value="{!CvInformationSchool.City__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Graduated Status">
+                        <apex:outputField value="{!CvInformationSchool.Graduated_Status__c}"/>
+                    </apex:column>                
+                    <apex:column headerValue="Grade Average">
+                        <apex:outputField value="{!CvInformationSchool.Grade_Average__c}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <!-- COMPANY LİST -->
+            <apex:variable value="{!0}" var="index2j"/>
+            <apex:pageBlockSection id="companySection" title="{!$Label.Company_Information}" columns="1" collapsible="true"  > 
+                <apex:commandButton value="Add company" styleclass="butonadd" action="{!showcompanyPopup}"/>
+                <apex:pageBlockTable id="companyTable" value="{!CvInformationListCompany}" var="CvInformationCompany" rendered="{!IF(CvInformationListCompany.size>0,true,false)}">
+                    <apex:column style="text-align:right !important; align:right !important;" headerValue="Edit/Delete">
+                        <apex:commandButton value="Edit" styleclass="butonedit" action="{!companyEditButton}" image="{!$Resource.editPng}"  style="width:50px; height:30px;"  rerender="companyTable,companyedit" onclick="changeDisplay9();" >
+                            <apex:param name="MS_Itemj" assignTo="{!MS_Itemj}" value="{!CvInformationCompany.Id}" />
+                        </apex:commandButton>
+                        <apex:commandButton value="Delete" styleclass="butonedit" status="status"  rerender="companyTable" style="width:50px; height:30px;" image="{!$Resource.deleteSvg}" onclick="changeDisplay7();"  >
+                            <apex:param name="MS_Item2j" value="{!CvInformationCompany.Id}" assignTo="{!MS_Item2j}" />
+                        </apex:commandButton>
+                    </apex:column> 
+                    <apex:column headerValue="Number"> 
+                        <apex:variable var="index2j" value="{!index2j + 1}"/>
+                        <apex:outputLabel value="{!index2j}"/>
+                    </apex:column>
+                    <apex:column headerValue="Last Worked Company Name">
+                        <apex:outputField value="{!CvInformationCompany.Last_Worked_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Position in The Last Company">
+                        <apex:outputField value="{!CvInformationCompany.Position_in_The_Last_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Department">
+                        <apex:outputField value="{!CvInformationCompany.Department__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Year">
+                        <apex:outputField value="{!CvInformationCompany.Years__c}"/>
+                    </apex:column>                
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            <!-- ADD CERTİFİCATE -->
+            <apex:outputPanel id="CertificatePopup"> 
+                <apex:outputPanel id="AddCertificate" rendered="{!displayPopup}">
+                    <div class="demo-only" style="height: 640px;"  >
+                        <div id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Certificate Information Add</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="CertificateAddError" rendered="{!IF(goster!=3,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection >                        
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Certificate Name" for="CertificateName"></apex:outputLabel>
+                                            <apex:inputField id="CertificateName" value="{!CvInformationCertificatePopUp.Certificate_Name__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>   
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Level" for="Level"></apex:outputLabel>
+                                            <apex:inputField id="Level" value="{!CvInformationCertificatePopUp.Level__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Institution" for="Institution"></apex:outputLabel>
+                                            <apex:inputField id="Institution" value="{!CvInformationCertificatePopUp.Institution__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>                            
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral " value="Close" action="{!closeCertificatePopup}"/>
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Save" action="{!certificateAddButton}"/>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- EDİT CERTİFİCATE -->
+            <apex:outputPanel id="EditCertificatepopup">
+                <apex:outputPanel id="CertificatePopUpEdit" style="display : {!PopUpEditCer};" >
+                    <div class="demo-only"  >
+                        <section id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Certificate Information Edit</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="CertificateEditError" rendered="{!IF(goster!=1,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection id="test">                        
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Certificate Name" for="CertificateName"></apex:outputLabel>
+                                            <apex:inputField id="CertificateName" value="{!CvInformationCertificatePopUpEdit.Certificate_Name__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            
+                                            <apex:outputLabel value="Level" for="Level"></apex:outputLabel>
+                                            <apex:inputField id="Level" value="{!CvInformationCertificatePopUpEdit.Level__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Institution" for="Institution"></apex:outputLabel>
+                                            <apex:inputField id="Institution" value="{!CvInformationCertificatePopUpEdit.Institution__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>                 
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral" value="Close" action="{!closePopupedit}"/>
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Edit" action="{!editcertificate}"  >
+                                    </apex:commandButton>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- DELETE CERTİFİCATE -->
+            <apex:outputPanel >
+                <apex:outputPanel id="delete" style="display : {!PopUpDeleteCer};">
+                    <div class="demo-only" style="height: 640px;">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Certificate Information Delete</h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <p>Do you want to delete ? </p>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_neutral" onclick="changeDisplay3();">No</button>
+                                    <apex:commandButton value="Yes" action="{!deleteCertificateButton}" styleClass="slds-button slds-button_brand" status="status"  rerender="CertificateTable,CertificateSection" onclick="changeDisplay3();" >
+                                    </apex:commandButton>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- ADD SCHOOL -->
+            <apex:outputPanel id="SchoolPopup"> 
+                <apex:outputPanel id="AddSchool" rendered="{!displayPopup2}">
+                    <div class="demo-only" style="height: 640px;"  >
+                        <div id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">School Information Add</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="SchoolAddError" rendered="{!IF(goster!=4,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection >                        
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="School Name" for="SchoolName"></apex:outputLabel>
+                                            <apex:inputField id="SchoolName" value="{!CvInformationSchoolPopUp.School_Name__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>   
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="School Type" for="SchoolType"></apex:outputLabel>
+                                            <apex:inputField id="SchoolType" value="{!CvInformationSchoolPopUp.School_Type__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="City" for="City"></apex:outputLabel>
+                                            <apex:inputField id="City" value="{!CvInformationSchoolPopUp.City__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Graduated Status" for="GraduatedStatus"></apex:outputLabel>
+                                            <apex:inputField id="GraduatedStatus" value="{!CvInformationSchoolPopUp.Graduated_Status__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Grade Average" for="GradeAverage"></apex:outputLabel>
+                                            <apex:inputField id="GradeAverage" value="{!CvInformationSchoolPopUp.Grade_Average__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>  
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral " value="Close" action="{!closeSchoolPopup}"/>
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Save" action="{!SchoolAddButton}"/>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- EDİT SCHOOL -->
+            <apex:outputPanel id="EditSchoolpopup">
+                <apex:outputPanel id="SchoolPopUpEdit" style="display : {!PopUpEditSC};" >
+                    <div class="demo-only"  >
+                        <section id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">School Information Edit</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="SchoolEditError" rendered="{!IF(goster!=5,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection id="School">                    
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="School Name" for="SchoolName"></apex:outputLabel>
+                                            <apex:inputField id="SchoolName" value="{!CvInformationSchoolPopUpEdit.School_Name__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>   
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="School Type" for="SchoolType"></apex:outputLabel>
+                                            <apex:inputField id="SchoolType" value="{!CvInformationSchoolPopUpEdit.School_Type__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="City" for="City"></apex:outputLabel>
+                                            <apex:inputField id="City" value="{!CvInformationSchoolPopUpEdit.City__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Graduated Status" for="GraduatedStatus"></apex:outputLabel>
+                                            <apex:inputField id="GraduatedStatus" value="{!CvInformationSchoolPopUpEdit.Graduated_Status__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Grade Average" for="GradeAverage"></apex:outputLabel>
+                                            <apex:inputField id="GradeAverage" value="{!CvInformationSchoolPopUpEdit.Grade_Average__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>            
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral" value="Close" action="{!closePopupeditSchool}" onclick="changeDisplay4();"/>
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Edit" action="{!editSchool}" rerender=""/>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>  
+            <!-- DELETE SCHOOL -->
+            <apex:outputPanel >
+                <apex:outputPanel id="delete2" style="display : {!PopUpDeleteCer};">
+                    <div class="demo-only" style="height: 640px;">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Certificate Information Delete</h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <p>Do you want to delete ? </p>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_neutral" onclick="changeDisplay6();">No</button>
+                                    <apex:commandButton value="Yes" action="{!deleteSchoolButton}" styleClass="slds-button slds-button_brand" status="status"  rerender="schoolSection,schoolTable" onclick="changeDisplay6();" >
+                                    </apex:commandButton>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel> 
+            <!-- ADD COMPANY -->
+            <apex:outputPanel id="CompoanyPopup"> 
+                <apex:outputPanel id="Addcompany" rendered="{!displayPopupcomp}">
+                    <div class="demo-only" style="height: 640px;"  >
+                        <div id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Company Information Add</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="CertificateAddError5" rendered="{!IF(goster!=7,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection id="Company">                    
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Last Worked Company" for="Last_Worked_Company"></apex:outputLabel>
+                                            <apex:inputField id="Last_Worked_Company" value="{!CvInformationCompanyPopUp.Last_Worked_Company__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>   
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Position in The Last Company" for="Position_in_The_Last_Company"></apex:outputLabel>
+                                            <apex:inputField id="Position_in_The_Last_Company" value="{!CvInformationCompanyPopUp.Position_in_The_Last_Company__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Department" for="Department"></apex:outputLabel>
+                                            <apex:inputField id="Department" value="{!CvInformationCompanyPopUp.Department__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Years" for="Years"></apex:outputLabel>
+                                            <apex:inputField id="Years" value="{!CvInformationCompanyPopUp.Years__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>    
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral " value="Close" action="{!closecompanyPopup}"/>
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Save" action="{!companyAddButton}"/>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- EDIT COMPANY -->
+            <apex:outputPanel id="EditCompanpopup">
+                <apex:outputPanel id="editcompany" style="display : {!PopUpEditJ};" >
+                    <div class="demo-only" style="height: 640px;"  >
+                        <div id="sectionpopup" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Company Information Edit</h2>
+                                    <p class="slds-m-top_x-small"><apex:pageMessages id="CertificateAddError9" rendered="{!IF(goster!=8,false,true)}"/></p>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <apex:pageblockSection id="companyedit">                    
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Last Worked Company" for="LastWorkedCompany"></apex:outputLabel>
+                                            <apex:inputField id="LastWorkedCompany" value="{!CvInformationCompanyPopUpEdit.Last_Worked_Company__c}"/>
+                                        </apex:pageblockSectionItem> 
+                                        <p>
+                                        </p>   
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Position in The Last Company" for="PositioninTheLastCompany"></apex:outputLabel>
+                                            <apex:inputField id="PositioninTheLastCompany" value="{!CvInformationCompanyPopUpEdit.Position_in_The_Last_Company__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Department" for="Department2"></apex:outputLabel>
+                                            <apex:inputField id="Department2" value="{!CvInformationCompanyPopUpEdit.Department__c}"/>
+                                        </apex:pageblockSectionItem>
+                                        <p>
+                                        </p>
+                                        <apex:pageblockSectionItem >
+                                            <apex:outputLabel value="Years" for="Years2"></apex:outputLabel>
+                                            <apex:inputField id="Years2" value="{!CvInformationCompanyPopUpEdit.Years__c}"/>
+                                        </apex:pageblockSectionItem>
+                                    </apex:pageblockSection>    
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <apex:commandButton styleClass="slds-button slds-button_neutral " value="Close" action="{!closePopupeditcompany}" />
+                                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Edit" action="{!editcompany}"/>
+                                </footer>
+                            </div>
+                        </div>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <!--DELETE COMPANY-->
+            <apex:outputPanel >
+                <apex:outputPanel id="delete3" style="display : {!PopUpDeleteCer};">
+                    <div class="demo-only" style="height: 640px;">
+                        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                            <div class="slds-modal__container">
+                                <header class="slds-modal__header">
+                                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Certificate Information Delete</h2>
+                                </header>
+                                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                    <p>Do you want to delete ? </p>
+                                </div>
+                                <footer class="slds-modal__footer">
+                                    <button class="slds-button slds-button_neutral" onclick="changeDisplay8();">No</button>
+                                    <apex:commandButton value="Yes" action="{!deletecompanyButton}" styleClass="slds-button slds-button_brand" status="status"  rerender="companySection,companyTable" onclick="changeDisplay8();" >
+                                    </apex:commandButton>
+                                </footer>
+                            </div>
+                        </section>
+                        <div class="slds-backdrop slds-backdrop_open"></div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel> 
+            <script>
+            function changeDisplay(){
+                document.getElementById("j_id0:j_id2:j_id3:CertificatePopUpEdit").style.display = "block";
+            }
+            function changeDisplay1(){
+                document.getElementById("j_id0:j_id2:j_id3:SchoolPopUpEdit").style.display = "block";
+            }
+            function changeDisplay2(){
+                document.getElementById("j_id0:j_id2:j_id3:delete").style.display = "block";
+            }
+            function changeDisplay3(){
+                document.getElementById("j_id0:j_id2:j_id3:delete").style.display = "none";
+            }
+            function changeDisplay4(){
+                document.getElementById("j_id0:j_id2:j_id3:SchoolPopUpEdit").style.display = "none";
+            }
+            
+            function changeDisplay5(){
+                document.getElementById("j_id0:j_id2:j_id3:delete2").style.display = "block";
+            }
+            function changeDisplay6(){
+                document.getElementById("j_id0:j_id2:j_id3:delete2").style.display = "none";
+            }  
+            function changeDisplay7(){
+                document.getElementById("j_id0:j_id2:j_id3:delete3").style.display = "block";
+            }
+            function changeDisplay8(){
+                document.getElementById("j_id0:j_id2:j_id3:delete3").style.display = "none";
+            } 
+            function changeDisplay9(){
+                document.getElementById("j_id0:j_id2:j_id3:editcompany").style.display = "block";
+            }
+            function changeDisplay10(){
+                document.getElementById("j_id0:j_id2:j_id3:editcompany").style.display = "none";
+            } 
+            </script>
+            <style>
+                .butonadd{ 
+                float: right !important;
+                z-index:2 !important;
+                }
+                .butonedit{ 
+                float: left !important;
+                z-index:2 !important;
+                }
+                .butonsave{ 
+                float: center !important;
+                z-index:2 !important;
+                }
+                .rightAlign {text-align:right !important;}
+                
+            </style>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

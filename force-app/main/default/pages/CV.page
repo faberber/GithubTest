@@ -1,0 +1,90 @@
+<apex:page standardController="CV__c" extensions="CVVisualForcePageExtensions" lightningStylesheets="true"  >
+    <apex:pageBlock >
+        <div>
+            <div style=" width:%90; float: left; ">
+                <h1><center>{!CV__c.First_Name__c}  {!CV__c.Last_Name__c}</center>
+                </h1> 
+                
+            </div>
+            <div  style=" width:%10; float: right;">
+                <apex:image id="imagedisplay" styleclass="butonadd" url="/servlet/servlet.FileDownload?file={!file.Id}" width="130" height="150" rendered="{!IF(file.Id==null,false,true)}"/>
+                
+            </div>
+        </div>
+        <apex:pageBlockSection title="{!$Label.Information}" >
+            <apex:outputField value="{!CV__c.First_Name__c}"/>        
+            <apex:outputField value="{!CV__c.Last_Name__c}"/>        
+            <apex:outputField value="{!CV__c.Birthday__c}"/>        
+            <apex:outputField value="{!CV__c.E_Mail__c}"/>        
+            <apex:outputField value="{!CV__c.Web_Site__c}"/>        
+            <apex:outputField value="{!CV__c.Maried_Status__c}"/>  
+            <apex:outputField value="{!CV__c.Gender__c}"/>  
+            <apex:outputField value="{!CV__c.Millitary__c}"/>        
+            <apex:outputField value="{!CV__c.Job_Experience__c}"/>        
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.SchoolInformation}" columns="1" collapsible="true" rendered="{!IF(CvInformationListSchool.size>0,true,false)}">
+            <apex:pageBlockTable value="{!CvInformationListSchool}" var="CvInformationSchool"  >
+                <apex:column headerValue="School Name">
+                    <apex:outputField value="{!CvInformationSchool.School_Name__c}"/>
+                </apex:column>
+                <apex:column headerValue="School Type">
+                    <apex:outputField value="{!CvInformationSchool.School_Type__c}"/>
+                </apex:column>
+                <apex:column headerValue="City">
+                    <apex:outputField value="{!CvInformationSchool.City__c}"/>
+                </apex:column>
+                <apex:column headerValue="Graduated Status">
+                    <apex:outputField value="{!CvInformationSchool.Graduated_Status__c}"/>
+                </apex:column>                
+                <apex:column headerValue="Grade Average">
+                    <apex:outputField value="{!CvInformationSchool.Grade_Average__c}"/>
+                </apex:column> 
+            </apex:pageBlockTable>  
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.Company_Information}" columns="1" collapsible="true" rendered="{!IF(CvInformationListCompany.size>0,true,false)}" >
+            <apex:pageBlockTable value="{!CvInformationListCompany}" var="CvInformationCompany"  >
+                <apex:column headerValue="Last Worked Company Name">
+                    <apex:outputField value="{!CvInformationCompany.Last_Worked_Company__c}"/>
+                </apex:column>
+                <apex:column headerValue="Position in The Last Company">
+                    <apex:outputField value="{!CvInformationCompany.Position_in_The_Last_Company__c}"/>
+                </apex:column>
+                <apex:column headerValue="Department">
+                    <apex:outputField value="{!CvInformationCompany.Department__c}"/>
+                </apex:column>
+                <apex:column headerValue="Year">
+                    <apex:outputField value="{!CvInformationCompany.Years__c}"/>
+                </apex:column>                              
+            </apex:pageBlockTable> 
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="{!$Label.Certificate_Information}" columns="1" collapsible="true" rendered="{!IF(CvInformationListCertificate.size>0,true,false)}">
+            <apex:pageBlockTable value="{!CvInformationListCertificate}" var="CvInformationCertificate"   >
+                <apex:column headerValue="Certificate Name">
+                    <apex:outputField value="{!CvInformationCertificate.Certificate_Name__c}"/>
+                </apex:column>
+                <apex:column headerValue="Level">
+                    <apex:outputField value="{!CvInformationCertificate.Level__c}"/>
+                </apex:column>
+                <apex:column headerValue="Institution">
+                    <apex:outputField value="{!CvInformationCertificate.Institution__c}"/>
+                </apex:column>                            
+            </apex:pageBlockTable> 
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="Notes & Attachments " columns="1" collapsible="true" rendered="{!IF(CvInformationAttachment.size>0,true,false)}">
+            <apex:repeat value="{!CvInformationAttachment}" var="att">
+            <apex:panelgrid columns="1">
+                <apex:outputLink value="/{!att.Id}">Download {!att.name} </apex:outputLink>
+            </apex:panelgrid>
+</apex:repeat>
+        </apex:pageBlockSection>        
+    </apex:pageBlock>
+    <style>
+                .butonadd{ 
+                float: right !important;
+        		margin-right: 30px !important;
+                z-index:2 !important;
+                }
+                
+                
+            </style>
+</apex:page>

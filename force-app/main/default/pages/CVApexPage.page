@@ -1,0 +1,126 @@
+<apex:page controller="CVApexPageController" lightningStylesheets="true">
+    <apex:form >  
+        <apex:pageBlock >
+            <h3>    
+                <apex:pageMessages id="msgId"/>
+                <h1>
+                    {!Cv.Id}
+                </h1>
+            </h3>
+            <center> 
+                <div class="float-button">
+                    <apex:commandButton action="{!save}" value="Save" styleClass="buton" />  
+                </div>
+            </center>
+            <apex:pageBlockSection title="{!$Label.Information}" >
+                <apex:inputField value="{!Cv.First_Name__c}" />
+                <apex:inputField value="{!Cv.Last_Name__c}" />
+                <apex:inputField value="{!Cv.Birthday__c}" /> 
+                <apex:inputField value="{!Cv.E_Mail__c}" />
+                <apex:inputField value="{!Cv.Web_Site__c}" />
+                <apex:inputField value="{!Cv.Maried_Status__c}" />
+                <apex:inputField value="{!Cv.Millitary__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="School Information" columns="1" collapsible="true"  >
+                <apex:commandButton action="{!addSchool}" value="Add School Information" styleclass="butonadd"/>
+                <p></p> 
+                <apex:pageBlockTable value="{!CvInformationListSchool}" var="CvInformationSchool" rendered="{!IF(VisibleSchool<>null,true,false)}" >
+                    <apex:column headerValue="School Name">
+                        <apex:inputField value="{!CvInformationSchool.School_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="School Type">
+                        <apex:inputField value="{!CvInformationSchool.School_Type__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="City">
+                        <apex:inputField value="{!CvInformationSchool.City__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Graduated Status">
+                        <apex:inputField value="{!CvInformationSchool.Graduated_Status__c}"/>
+                    </apex:column>                
+                    <apex:column headerValue="Grade Average">
+                        <apex:inputField value="{!CvInformationSchool.Grade_Average__c}"/>
+                    </apex:column> 
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.Company_Information}" columns="1" collapsible="true">
+                <apex:commandButton action="{!addCompany}" value="Add Company Information" styleclass="butonadd"/>
+                <p></p>
+                <apex:pageBlockTable value="{!CvInformationListCompany}" var="CvInformationCompany" rendered="{!IF(VisibleCompany<>null,true,false)}">
+                    <apex:column headerValue="Last Worked Company Name">
+                        <apex:inputField value="{!CvInformationCompany.Last_Worked_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Position in The Last Company">
+                        <apex:inputField value="{!CvInformationCompany.Position_in_The_Last_Company__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Department">
+                        <apex:inputField value="{!CvInformationCompany.Department__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Year">
+                        <apex:inputField value="{!CvInformationCompany.Years__c}"/>
+                    </apex:column>                              
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="{!$Label.Certificate_Information}" columns="1" collapsible="true">
+                <apex:commandButton action="{!addCertificate}" value="Add Certificate Information" styleclass="butonadd"/>
+                <p></p>
+                <apex:pageBlockTable value="{!CvInformationListCertificate}" var="CvInformationCertificate" rendered="{!IF(VisibleCertificate<>null,true,false)}">
+                    <apex:column headerValue="Certificate Name">
+                        <apex:inputField value="{!CvInformationCertificate.Certificate_Name__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Level">
+                        <apex:inputField value="{!CvInformationCertificate.Level__c}"/>
+                    </apex:column>
+                    <apex:column headerValue="Institution">
+                        <apex:inputField value="{!CvInformationCertificate.Institution__c}"/>
+                    </apex:column>                            
+                </apex:pageBlockTable>  
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Notes & Attachments " columns="1" collapsible="true">
+                <apex:inputFile fileName="{!objCaseAtt.Name}" value="{!objCaseAtt.body}"></apex:inputFile>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <style>
+        .float-button { 
+        position: fixed;
+        bottom:10px;
+        width: 100%; 
+        z-index:1 !important;
+        }
+        .buton{ 
+        color:white !important;
+        background:rgba(27, 82, 151, 1) !important;
+        z-index:1 !important;
+        } 
+        .butonadd{ 
+        float: right !important;
+        z-index:2 !important;
+        
+        }
+        .butonadd:hover{ 
+        background:rgba(27, 82, 151, 1)  !important;
+        color:white !important;
+        text-decoration: none !important;
+        outline: 0 !important;
+        -webkit-transition: background 300ms ease-in !important;
+        -moz-transition: background 300ms ease-in !important;
+        -o-transition: background 300ms ease-in !important;
+        -webkit-transition: color 300ms ease-in !important;
+        -moz-transition: color 300ms ease-in !important;
+        -o-transition: color 300ms ease-in !important;
+        }
+        .buton:hover {
+        background: white !important;
+        color:rgba(27, 82, 151, 1) !important;
+        text-decoration: none !important;
+        outline: 0 !important;
+        -webkit-transition: background 300ms ease-in !important;
+        -moz-transition: background 300ms ease-in !important;
+        -o-transition: background 300ms ease-in !important;
+        -webkit-transition: color 300ms ease-in !important;
+        -moz-transition: color 300ms ease-in !important;
+        -o-transition: color 300ms ease-in !important;
+        }
+        
+    </style>
+</apex:page>

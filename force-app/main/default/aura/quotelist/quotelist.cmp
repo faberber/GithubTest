@@ -1,0 +1,68 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <!--lightningRecEditFormComp-->
+    <aura:attribute name="disabled" type="Boolean" default="false" />
+    <aura:attribute name="saved" type="Boolean" default="false" />
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner />
+    </aura:if>
+    <aura:if isTrue="{!!v.saved}">  
+        <lightning:recordEditForm
+                                  aura:id="createAccountForm"
+                                  onload="{!c.handleLoad}"
+                                  onsubmit="{!c.handleSubmit}"
+                                  onsuccess="{!c.handleSuccess}"
+                                  onerror="{!c.getError}"                   
+                                  objectApiName="QuoteLineItem">
+            <lightning:messages />
+            <lightning:inputField  fieldName="Discount" />
+            <lightning:inputField fieldName="UnitPrice" />
+            <lightning:inputField fieldName="Quantity" />
+            <lightning:inputField fieldName="QuoteId" value="0Q01j0000007ImvCAE"      />    
+            <lightning:inputField fieldName="Product2Id"  value="01t58000005mQJTAA2"   /> 
+            <lightning:inputField fieldName="PricebookEntryId" value="01u58000005YAjHAAW" /> 
+            <lightning:inputField  fieldName="Discount" />
+            <lightning:inputField fieldName="UnitPrice" />
+            <lightning:inputField fieldName="Quantity" />
+            <lightning:inputField fieldName="QuoteId" value="0Q01j0000007ImvCAE"      />    
+            <lightning:inputField fieldName="Product2Id"  value="01t58000005mQJTAA2"   /> 
+            <lightning:inputField fieldName="PricebookEntryId" value="01u58000005YAjHAAW" /> 
+            
+            
+            
+            
+            <div class="slds-m-top_medium">
+                <lightning:button disabled="{!v.disabled}" variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>  
+        
+        <!--
+        
+        <lightning:recordEditForm
+            aura:id="createAccountForm"
+            onload="{!c.handleLoad}"
+            onsubmit="{!c.handleSubmit}"
+            onsuccess="{!c.handleSuccess}"
+            
+            objectApiName="Account">
+            
+            <lightning:messages />
+
+            <lightning:inputField fieldName="Name" />
+            <lightning:inputField fieldName="AccountNumber" />
+            <lightning:inputField fieldName="Type" />
+            <lightning:inputField fieldName="Industry " />
+            <lightning:inputField fieldName="BillingStreet" />
+            <lightning:inputField fieldName="BillingCity" />
+            <lightning:inputField fieldName="BillingState" />
+            <div class="slds-m-top_medium">
+                <lightning:button disabled="{!v.disabled}" variant="brand" type="submit" name="save" label="Save" />
+            </div>
+        </lightning:recordEditForm>-->
+        
+        <aura:set attribute="else">
+            <p>Saved!</p>
+        </aura:set>
+    </aura:if>
+    
+</aura:component>

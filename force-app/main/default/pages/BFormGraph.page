@@ -1,0 +1,49 @@
+<apex:page standardController="opportunity" extensions="OpportunityCashFlowQuarterController" sidebar="false" action="{!init}" showHeader="false" standardStylesheets="false"> 
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawVisualization);
+
+
+      function drawVisualization() {
+        // Some raw data (not necessarily accurate)
+        var data = google.visualization.arrayToDataTable(
+             [
+                 ['Month', 'Order', 'Inflow', 'Outflow', 'Cumulative Cash'],
+                 <apex:variable var="i" value="{!1}"/>
+                 <apex:repeat value="{!keyYearMonth}" var="keyStr">
+                     ['{!keyStr}', 
+                     <apex:outputPanel layout="none" rendered="{!i==1}">
+                     {!oppObj.Amount}, 
+                     </apex:outputPanel>
+                     <apex:outputPanel layout="none" rendered="{!i!=1}">
+                     0, 
+                     </apex:outputPanel>
+                     {!mapOfInFlowInvoiceAdvance[keyStr] + mapOfInFlowInvoiceInvoicingCollection[keyStr]}, 
+                     {!mapOfOutFlowPayment[keyStr]}, 
+                     {!mapOfCumulativeCash[keyStr]}],
+                     <apex:variable var="i" value="{!i+1}"/>
+                 </apex:repeat>
+             ]
+         );
+
+    var options = {
+      title : "{!oppObj.Name}" + ' Graph',
+      vAxis: {title: ''},
+      hAxis: {title: 'Quarter'},
+      seriesType: 'bars',
+      series: {3: {type: 'line'}}
+    };
+
+    var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+  </body>
+</html>
+</apex:page>

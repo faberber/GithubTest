@@ -1,0 +1,13 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" >
+	
+<aura:attribute name="startId" type="string"/>
+    <aura:attribute name="parentId" type="string"/>
+
+
+    <div class="div2" id="div2" ondrop="{!c.drop}" ondragover="{!c.allowDrop}">
+                <img src="{!$Resource.editPng}" draggable="true" ondragstart="{!c.drag}" id="drag2" width="50" height="31"/>
+    </div>
+    <div class="div2" id="div3" ondrop="{!c.drop}" ondragover="{!c.allowDrop}"><span id="drag3"> </span></div>
+
+    
+</aura:component>

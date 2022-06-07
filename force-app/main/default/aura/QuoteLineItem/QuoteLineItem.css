@@ -1,0 +1,24 @@
+.THIS {
+}
+.THIS.c-container {
+    border: 1px solid #d8dde6;
+    margin: 10px 0 20px 0;
+}
+.THIS .large {
+    height: 200px;
+}
+.THIS .x-large {
+    height: 300px;
+}
+.THIS .custom-box {
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #d8dde6;
+}
+.THIS .input-group .lightningInput {
+    display: inline-block;
+    margin-right: 10px;
+}
+.THIS .slds-button_icon-bare{
+    display: none;
+}

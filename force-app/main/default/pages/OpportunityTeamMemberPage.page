@@ -1,0 +1,267 @@
+<apex:page standardController="Opportunity" extensions="OpportunityTeamMemberPageController" title="Add Opportunity Team Member" tabStyle="Opportunity" id="pageId" showHeader="false"  sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" >
+    <html xmlns="https://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        
+        <head>            
+            <meta charset="utf-8"/>
+            <apex:stylesheet value="{!URLFOR($Resource.SLDS104, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+            <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+            <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+             
+            <style>
+                html *
+                {
+                   font-size: 9pt !important;
+                   color: #000 !important;
+                   font-family: Arial !important;
+                }
+                .dateStyle{
+                    width: 60% !important;
+                    margin-right: 2% !important;
+                }
+
+                .slds{
+                    background-color: #736d6d !important;
+                }
+
+                .slds .slds-text-heading--small{
+                    font-size: 18px !important;
+                }
+
+                .slds .slds-text-body--small{
+                    font-size: 16px !important;
+                    margin-top: -1px; 
+                }
+
+                .slds .slds-page-header__title{
+                    font-size: 20px !important;
+                }
+
+                .slds-input{
+                    width: inherit !important;
+                }
+                
+                .multiSelectPicklistTable tr:first-child {
+    				visibility:hidden;
+                }
+                .multiSelectPicklistTable td {
+    				border-top:none !important;
+                }
+                .multiSelectPicklistTable img{
+                	height:20px !important;
+                }
+            </style>
+        </head>
+        
+        <body>
+            <apex:form >
+                <div class="slds">
+                    <apex:actionstatus id="counterStatus">
+                        <apex:facet name="start">
+                            <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;position:fixed;z-index:1;">
+                                <div class="waitingHolder">
+                                    <div class="slds-spinner_container">
+                                        <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                                            <div class="slds-spinner__dot-a"></div>
+                                            <div class="slds-spinner__dot-b"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:facet>
+                    </apex:actionstatus>
+                    <!-- Header Starts -->
+                    <div class="slds-page-header" role="banner">
+                      <div class="slds-media">
+                        <div class="slds-media__figure">
+                          <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                            <use xlink:href="{!URLFOR($Resource.SLDS104, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                          </svg>
+                        </div>
+                        <div class="slds-media__body">
+                          <p class="slds-page-header__title slds-truncate slds-align-middle" title="Rohde Corp - 80,000 Widgets">Add Opportunity Team Member</p>
+                          <p class="slds-text-body--small slds-page-header__info">Opportunity</p>
+                        </div>
+                        <div class="slds-col slds-no-flex slds-align-bottom">
+                        </div> 
+                      </div>
+                    </div>
+                    <!-- Header Ends -->
+                    
+                    <apex:outputPanel layout="block" id="mainForm">
+                        
+                        <!-- Opportunity Product Section Starts -->
+                        <br/>
+                                <!-- Error Message Starts -->
+                  		<apex:pageMessages id="errorMessage" rendered="{!tempProductError}"/>                    			
+                    			<!-- Error Message Ends --> 
+                        <apex:outputPanel styleClass="slds-card slds-m-top--small" layout="block" id="productBlock"  >
+                            <div class="slds-card__header slds-grid">
+                                <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <h2 class="slds-text-heading--small slds-truncate">Opportunity Team Member</h2>
+                                    </div>
+                                </div>
+                                
+                            </div>                            
+                            <div class="slds-card__body slds-scrollable--x">
+                                <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                                   <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label" scope="col">User</th>
+                                            <th class="slds-text-heading--label" scope="col">Team Member Role</th>
+                                            <th class="slds-text-heading--label" scope="col">Role Type</th>
+                                            <th class="slds-text-heading--label" scope="col">Access Level</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       <tr class="slds-hint-parent">                                           
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityTeamMember.UserId}" html-placeholder="Team Member Name" />
+                                            </td>                                            
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityTeamMember.TeamMemberRole}" />
+                                            </td>
+                                           
+                                            <td style="font-weight:200;">
+                                                <div>
+                                                	<apex:inputField styleClass="" value="{!tempOpportunityTeamMember.Role_Type__c}" />
+                                                </div>
+                                            </td>     
+                                            <td style="font-weight:200;">
+                                                <apex:inputField styleClass="slds-input" value="{!tempOpportunityTeamMember.OpportunityAccessLevel}"/>
+                                            </td>
+                                           <td style="font-weight:700;">
+                                               <apex:commandButton value="Save" action="{!addRow}" status="counterStatus" rerender="mainForm,errorMessage" styleClass="slds-button slds-button--neutral slds-button--small" oncomplete="window.location.href = '/{!oppId}' " >
+                                                    <apex:param name="param3" assignTo="{!objectType}" value="OpportunityTeamMember"/>
+                                                </apex:commandButton>
+                                            </td>
+                                        </tr> 
+                                        
+                                    </tbody>
+                                    <tfoot> 
+                                    
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </div>
+            </apex:form>
+
+            <script> 
+                        $(document).ready(function(){
+                            changeLookupView();
+                            changeSelectClass();
+                        });
+                        
+                        function changeLookupView(){
+                            for(var i = 0; i < document.getElementsByClassName('provider').length; i++){
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('provider')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('purchaseFrom').length; i++){
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('purchaseFrom')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('solutionResponsible').length; i++){
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('solutionResponsible')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                            
+                            for(var i = 0; i < document.getElementsByClassName('vendor').length; i++){
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[0].style.width = '88%';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.width = '15%';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.padding = '0px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].style.marginLeft = '2%';
+                                //document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].src = '{!$Resource.LookupImage}';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.width = '23px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.height = '23px';
+                                document.getElementsByClassName('vendor')[i].childNodes[6].childNodes[2].childNodes[0].style.marginLeft = '10%';
+                            }
+                        }
+                        
+                        function selectAllCheckboxes(pId, clsName){
+                            for(var i = 1; i < document.getElementsByClassName(clsName).length; i++){
+                                document.getElementsByClassName(clsName)[i].checked = document.getElementById(pId).checked;
+                            }
+                            checkForTrue();
+                        }
+                        
+                        function checkCheckbox(clsName){
+                            var isTrue = false;
+                            for(var i = 1; i < document.getElementsByClassName(clsName).length; i++){
+                                if(document.getElementsByClassName(clsName)[i].checked == true){
+                                    isTrue = true;
+                                }
+                            }
+                            document.getElementsByClassName(clsName)[0].checked = isTrue;
+                            checkForTrue();
+                        }
+                        
+                        function checkForTrue(){
+                            var allFalse = true;
+                            for(var i = 0; i < document.getElementsByClassName('chkInput').length; i++){
+                                if(document.getElementsByClassName('chkInput')[i].checked == true){
+                                    allFalse = false;
+                                    document.getElementById('pageId:j_id3:deleteBtn').disabled = false;
+                                    document.getElementById('pageId:j_id3:deleteBtn').onclick = function() { openDiv(); return false; };
+                                }
+                            }
+                            if(allFalse == true){
+                                document.getElementById('pageId:j_id3:deleteBtn').disabled = true;
+                            }
+                            changeLookupView();
+                        }
+                        
+                        function openDiv(){
+                            document.getElementById('dialog-confirm').style.display = 'Block';
+                        }
+                        
+                        function closeAndDeletetDiv(){
+                            deleteRecords();
+                            document.getElementById('dialog-confirm').style.display = 'None';
+                        }
+                        
+                        function closeDiv(){
+                            document.getElementById('dialog-confirm').style.display = 'None';
+                        }
+                        
+                        function changeMargin(costId, salesID, marginId){
+                            var costP = parseInt(document.getElementById(costId).childNodes[0].value.replace('.','').replace(',','.'));
+                            var salesP = parseInt(document.getElementById(salesID).childNodes[0].value.replace('.','').replace(',','.'));
+                            var margin = 0.0;
+                            if(salesP > 0 && !isNaN(costP)) margin = ((salesP - costP) / salesP) * 100;
+                            margin = margin.toFixed(2);
+                            document.getElementById(marginId).childNodes[0].innerHTML = '% ' + margin;
+                        }
+                        
+                        function changeSelectClass(){
+                            for(var i = 0; i < document.getElementsByClassName('profitCenter').length; i++){
+                                document.getElementsByClassName('profitCenter')[i].childNodes[0].childNodes[0].className = 'slds-input';
+                            }
+                        }
+                    </script>
+        </body>
+    </html>
+</apex:page>

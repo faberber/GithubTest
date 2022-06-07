@@ -1,0 +1,686 @@
+<apex:page standardController="Opportunity" extensions="OpportunityBFormController" tabstyle="Opportunity" title="B Form" showHeader="false"  sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="https://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <head>
+        <meta charset="utf-8"/>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS104, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <title>B Form</title>
+        <style>
+            .dateStyle{
+                width: 60% !important;
+                margin-right: 2% !important;
+            }
+        </style>
+        
+        <style>
+            
+            .num{
+               mso-number-format:Number;	
+            }
+            
+            .text{
+               mop-number-format:"\@";
+            }
+            
+            table.opportunityTable th{
+                border-bottom: 1px solid #D2D1D1 !important;
+                height: 20px !important;
+                vertical-align: middle !important;
+                padding-left: .3%;
+            }
+            
+            table.opportunityTable td{
+                border-bottom: 1px solid #D2D1D1 !important;
+                border-left: 1px solid #D2D1D1 !important;
+                height: 20px !important;
+                vertical-align: middle !important;
+                padding-left: .3%;
+            }
+            
+            .numberAlign{
+                text-align: right;
+                padding-left: 0 !important;
+            }
+            
+            .total{
+                font-weight:700;
+            }
+            
+            .clickable{
+                cursor:pointer;
+            }
+            
+            .componentHeader{
+                border-left: 1px solid #D2D1D1 !important;
+                color: #000000 !important;
+            }
+            
+            .trHeaderColor{
+                background: #C3C3C3;
+            }
+            
+            .trRowColor
+            {
+                background: #E6E6E6;
+            }
+        </style>
+            
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            
+        <script>
+            $(document).ready(function(){
+                toggleTr('productTr');
+                toggleTr('serviceTr');
+                toggleTr('rdTr');
+                toggleTr('cosTr');
+                toggleTr('relatedCostTr');
+                toggleAll();
+            });
+            
+            function toggleTr(cName){
+                var operationalObject = document.getElementsByClassName(cName);
+
+                var arrow = $("#"+cName).html();
+                if(arrow == "▲")
+                {
+                    $("#"+cName).html("&#9660;"); 
+                }else
+                {
+                    $("#"+cName).html("&#9650;");
+                }
+
+                for(var i = 0; i< operationalObject.length; i++){
+                    if(operationalObject[i].style.display == 'show'){
+                        operationalObject[i].style.display = 'table-row';
+                    }else{
+                        operationalObject[i].style.display = 'show';
+                    }
+                }
+            }
+            
+            function toggleAll(){
+
+                var operationalObject = document.getElementsByClassName('allTr');
+                if(operationalObject.length > 0){
+                    if(operationalObject[0].style.display == 'show'){
+                        document.getElementById('j_id0:j_id4:toggleBtn').value = "-";
+                    }else{
+                        document.getElementById('j_id0:j_id4:toggleBtn').value = "+";
+                    }
+                }
+                for(var i = 0; i< operationalObject.length; i++){
+                    if(operationalObject[i].style.display == 'show'){
+                        operationalObject[i].style.display = 'table-cell';
+                    }else{
+                        operationalObject[i].style.display = 'show';
+                    }
+                }
+
+            }
+        </script>
+            
+    </head>
+    
+    <body>
+        <apex:form >
+            <div class="slds">
+                <!-- Header Starts -->
+                <div class="slds-page-header" role="banner">
+                  <div class="slds-media">
+                    <div class="slds-media__figure">
+                      <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                        <use xlink:href="{!URLFOR($Resource.SLDS104, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                      </svg>
+                    </div>
+                    <div class="slds-media__body">
+                      <p class="slds-page-header__title slds-truncate slds-align-middle" title="">B-Form</p>
+                      <p class="slds-text-body--small slds-page-header__info">Opportunity</p>
+                    </div>
+                    <div class="slds-col slds-no-flex slds-align-bottom">
+                      <div class="slds-button-group" role="group">
+                        <apex:commandButton value="Back" action="/{!oppName.id}" styleClass="slds-button slds-button--neutral"/>
+                        <apex:commandButton value="Export to Excel" action="/apex/OpportunityBFormExcel?id={!oppName.id}" styleClass="slds-button slds-button--neutral"/>
+                       <!-- <apex:commandButton id="toggleBtn" value="-" onclick="toggleAll(); return false;" style="font-size:16px;" styleClass="slds-button slds-button--neutral"/> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Header Ends -->
+                
+                
+                <div>
+                    <table class="slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                        <!-- Opportunity Details Starts -->
+                        <tr>
+                            <th class="total trHeaderColor componentHeader" width="30%"><b>Opportunity</b></th>
+                            <td class="">{!oppName.Name}</td>
+                        </tr>
+                        <tr>
+                            <th class="total trHeaderColor componentHeader"><b>Business Unit</b></th>
+                            <td class="">{!oppName.F_Business_Unit__c}</td>
+                        </tr>
+                        <tr>
+                            <th class="total trHeaderColor componentHeader"><b>Sales Segment</b></th>
+                            <td class="">{!oppName.Sales_Segment__r.Name}</td>
+                        </tr>
+                        <tr>
+                            <th class="total trHeaderColor componentHeader"><b>Solution Segment</b></th>
+                            <td class="">{!oppName.Estimated_Solution_Segment__c}</td>
+                        </tr>
+                        <tr>
+                            <th class="total trHeaderColor componentHeader"><b>Sales Manager</b></th>
+                            <td class="">{!oppName.Owner.Name}</td>
+                        </tr>
+                        <!-- Opportunity Details Ends -->
+                    </table>
+                </div>
+                
+                <br/>
+                <br/>
+                
+                <div class="slds-card__body slds-scrollable--x">
+					<table class="opportunityTable slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">
+                        <!-- Component Header Starts -->
+                        <tr>
+                            <td class="total trHeaderColor componentHeader"> B-form Components </td>
+                            <td class="total trHeaderColor componentHeader"> Type </td>
+                            <td class="total trHeaderColor componentHeader"> Technology Type </td>
+                            <td class="total trHeaderColor componentHeader"> Name </td>
+                            <td class="total trHeaderColor componentHeader"> Vendor &amp; Service Provider </td>
+                            <td class="total trHeaderColor componentHeader"> Purchase From </td>
+                            <td class="total trHeaderColor componentHeader"> Solution Engineer </td>
+                            <td class="total trHeaderColor componentHeader"> Revenue </td>
+                            <td class="total trHeaderColor componentHeader"> Cost </td>
+                            <td class="total trHeaderColor componentHeader"> SM </td>
+                            <td class="total trHeaderColor componentHeader"> SM% </td>
+                           <!-- <th class="componentHeader"> Indirect Cost (%{!oppName.BForm_Indirect_Cost_Ratio__c}) </th> 
+                            <th class="componentHeader"> GM </th>
+                            <th class="componentHeader"> GM% </th>
+                            <th class="componentHeader"> OPEX (%{!oppName.BForm_OPEX_Ratio__c}) </th>
+                            <th class="componentHeader"> EBIT </th>
+                            <th class="componentHeader"> EBIT % </th>
+                            <th class="componentHeader"> Finance Cost </th>
+                            <th class="componentHeader"> EBT </th>
+                            <th class="componentHeader"> EBT % </th> -->
+                        </tr>
+                        <!-- Component Header Ends -->
+                        
+                        <!-- Product Section Starts -->
+                        <tr class="trRowColor">
+                            <th>
+                                <div>
+                                    <div >Products</div>
+                                </div>
+                            </th>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor numberAlign "> 
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalProductRevenue}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign" > 
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalProductCost}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign ">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalProductSM}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign"> {!smProductRevenuePercentage}%</td>
+                            <!--<td class="total numberAlign"> {!totalProductIndirectCost} </td>
+                            <td class="total numberAlign"> {!totalProductGM} </td>
+                            <td class="total numberAlign"> {!gmProductRevenuePercentage}% </td>
+                            <td class="total numberAlign"> {!totalProductOpex} </td>
+                            <td class="total numberAlign"> {!totalProductEBIT} </td>-->
+                            <!--<td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>-->
+                        </tr>
+                        
+                        <apex:repeat value="{!productList}" var="product">
+                            <tr class="productTr">
+                                <th> </th>
+                                <td> {!product.Solution_Type__c} </td>
+                                <td> {!product.Technology_Domain__r.Name} </td>
+                                <td> {!product.Product2.Name} </td>
+                                <td> {!product.Vendor__r.Name} </td>
+                                <td> {!product.Manufacturer__r.Name} </td>
+                                <td> {!product.Originated_TD__r.Completed_by_User__r.Name} </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!product.Sales_Price_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!product.Cost_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!product.SM__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign"> {!product.SM_Perc__c}% </td>
+                                <!--<td class="numberAlign"> {!product.Indirect_Cost__c} </td>
+                                <td class="numberAlign"> {!product.GM__c} </td>
+                                <td class="numberAlign"> {!gmMap[product.id]}% </td>
+                                <td class="numberAlign"> {!product.Opex__c} </td>
+                                <td class="numberAlign"> {!product.EBIT__c} </td>-->
+                               <!-- <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td> -->
+                            </tr>
+                        </apex:repeat>
+                        <!-- Product Section Ends -->
+                        
+                        <!-- Blank Space Starts 
+                        <tr>
+                            <th class="topTH"></th><td class="allTr"></td>
+                            <!-- Extra 
+                            <td class="allTr"></td><td class="allTr"></td><td class="allTr"></td><td class="allTr"></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <!-- Blank Space Ends -->
+                        
+                        <!-- Service Section Starts -->
+                        <tr class="trRowColor">
+                            <th> 
+                                <div>
+                                    <div style="overflow: hidden;">Service</div>
+                                </div>
+                            </th>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor numberAlign ">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalServiceRevenue}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign ">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalServiceCost}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalServiceSM}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign"> {!smServiceRevenuePercentage}% </td>
+                            <!--<td class="total numberAlign"> {!totalServiceIndirectCost} </td>
+                            <td class="total numberAlign"> {!totalServiceGM} </td>
+                            <td class="total numberAlign"> {!gmServiceRevenuePercentage}% </td>
+                            <td class="total numberAlign"> {!totalServiceOpex} </td>
+                            <td class="total numberAlign"> {!totalServiceEBIT} </td>-->
+                           <!-- <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td> -->
+                        </tr>
+                        
+                        <apex:repeat value="{!serviceList}" var="service">
+                            <tr class="serviceTr">
+                                <th> </th>
+                                <td class="allTr"> {!service.Solution_Type__c} </td>
+                                <td class="allTr"> {!service.Technology_Domain__r.Name} </td>
+                                <td class="allTr"> {!service.Product2.Name} </td>
+                                <td class="allTr"> {!service.Vendor__r.Name} </td>
+                                <td class="allTr"> {!service.Manufacturer__r.Name} </td>
+                                <td class="allTr"> {!service.Originated_TD__r.Completed_by_User__r.Name} </td>                                
+                                <td class="numberAlign"> 
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!service.Sales_Price_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!service.Cost_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!service.SM__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign"> {!service.SM_Perc__c}% </td>
+                                <!--<td class="numberAlign"> {!service.Indirect_Cost__c} </td>
+                                <td class="numberAlign"> {!service.GM__c} </td>
+                                <td class="numberAlign"> {!gmMap[service.id]}% </td>
+                                <td class="numberAlign"> {!service.Opex__c} </td>
+                                <td class="numberAlign"> {!service.EBIT__c} </td>-->
+                               <!-- <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td> -->
+                            </tr>
+                        </apex:repeat>
+                        <!-- Service Section Ends -->
+                        
+                        <!-- Blank Space Starts 
+                        <tr>
+                            <th class="topTH"></th><td class="allTr"></td>
+                            <!-- Extra 
+                            <td class="allTr"></td><td class="allTr"></td><td class="allTr"></td><td class="allTr"></td>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <!-- Blank Space Ends -->
+                        
+                        <!-- RnD Section Starts -->
+                        <tr class="trRowColor">
+                            <th>
+                                <div>
+                                    <div style="overflow: hidden;"> R&amp;D </div>
+                                </div>
+                             </th>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor">  </td>
+                            <td class="trRowColor numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalRnDRevenue}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalRndCost}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!totalRnDSM}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="trRowColor numberAlign"> {!smRnDRevenuePercentage}% </td>
+                            <!--<td class="total numberAlign"> {!totalRnDIndirectCost} </td>
+                            <td class="total numberAlign"> {!totalRnDGM} </td>
+                            <td class="total numberAlign"> {!gmRnDRevenuePercentage}% </td>
+                            <td class="total numberAlign"> {!totalRnDOpex} </td>
+                            <td class="total numberAlign"> {!totalRnDEBIT} </td>-->
+                           <!-- <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td>  </td>-->
+                        </tr>
+                        
+                        <apex:repeat value="{!RnDList}" var="RnD">
+                            <tr class="trRowColor">
+                                <th> </th>
+                                <td class="allTr"> {!RnD.Solution_Type__c} </td>
+                                <td class="allTr"> {!RnD.Technology_Domain__r.Name} </td>
+                                <td class="allTr"> {!RnD.Product2.Name} </td>
+                                <td class="allTr"> {!RnD.Vendor__r.Name} </td>
+                                <td class="allTr"> {!RnD.Manufacturer__r.Name} </td>
+                                <td class="allTr"> {!RnD.Originated_TD__r.Completed_by_User__r.Name} </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!RnD.Sales_Price_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                           <apex:param value="{!RnD.Cost_USD__c}" />
+                                     </apex:outputText>
+                                </td>
+                                <td class="numberAlign">
+                                    <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!RnD.SM__c}" />
+                                 </apex:outputText>
+                                </td>
+                                <td class="numberAlign"> {!RnD.SM_Perc__c}% </td>
+                                <!--<td class="numberAlign"> {!RnD.Indirect_Cost__c} </td>
+                                <td class="numberAlign"> {!RnD.GM__c} </td>
+                                <td class="numberAlign"> {!gmMap[RnD.id]}% </td>
+                                <td class="numberAlign"> {!RnD.Opex__c} </td>
+                                <td class="numberAlign"> {!RnD.EBIT__c} </td>-->
+                                <!--<td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td>
+                                <td>  </td> -->
+                            </tr>
+                        </apex:repeat>
+                        <!-- RnD Section Ends -->
+                        </table>                         
+                        
+                        <!-- Total Starts -->
+                    <br/>
+                    <br/>
+                    
+                    <table class="opportunityTable slds-table slds-table--bordered slds-table--cell-buffer slds-no-row-hover">                  
+                    
+                    <tr>
+                        <td class="total trHeaderColor componentHeader">Total</td><td class="total trHeaderColor componentHeader">Amount</td> <td class="total trHeaderColor componentHeader">Percent</td>
+                            
+                   <tr>
+                         <td class = "trRowColor" width="30%" >Total Revenue</td>
+                         <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Amount_USD__c}" />
+                                 </apex:outputText>
+                         </td>
+                         <td></td>  
+                     </tr>     
+                        
+                    <tr>
+                        <td class="trRowColor">Total Cost</td>
+                         <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Total_Product_Cost_USD__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td></td>
+                    </tr>
+                    <tr> 
+                       <td class="trRowColor">Total SM</td>
+                        
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_SM__c}" />
+                                 </apex:outputText>
+                         </td>
+                        
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_SM_Perc__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr>
+                    <tr> 
+                        <td class="trRowColor">Indirect Cost</td>
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_Indirect_Cost__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_Indirect_Cost_Ratio__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr>
+                    <tr>
+                        <td class="trRowColor">GM</td>
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_GM__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_GM_Perc__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr>
+                    <tr> 
+                        <td class="trRowColor">OPEX</td>
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_OPEX__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_OPEX_Ratio__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr>
+                    <tr> 
+                        <td class="trRowColor">EBIT</td>
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBIT__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBIT_Perc__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr>
+                    <tr> 
+                       <td class="trRowColor">Finance Cost</td>
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Finance_Cost__c}" />
+                                 </apex:outputText>
+                         </td>
+                       <td></td>
+                    </tr>                   
+                    <tr > 
+                        <td class="trRowColor">EBT</td> 
+                        
+                        <td class="numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBT__c}" />
+                                 </apex:outputText>
+                         </td>
+                        <td class="numberAlign">%
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBT_Perc__c}" />
+                                 </apex:outputText>
+                         </td>
+                    </tr> 
+                    </tr>
+                  </table>   
+                      <!--      <td class="allTr">  </td>
+                            <td class="allTr">  </td>
+                            <td class="allTr">  </td>
+                            <td class="allTr">  </td>
+                            <td class="allTr">  </td>
+                            <td class="allTr">  </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Total_Sales_Price__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Total_Product_Cost__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_SM__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign"> {!oppName.BForm_SM_Perc__c}% </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_Indirect_Cost__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_GM__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign"> {!oppName.BForm_GM_Perc__c}% </td>
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_OPEX__c}" />
+                                 </apex:outputText>
+                            </td>
+                            
+                           <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBIT__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign"> {!oppName.BForm_EBIT_Perc__c}% </td>
+                            
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.Finance_Cost__c}" />
+                                 </apex:outputText>
+                            </td> 
+                            
+                            <td class="total numberAlign">
+                                <apex:outputText value="{0, number, ###,###,##0.00}">
+                                       <apex:param value="{!oppName.BForm_EBT__c}" />
+                                 </apex:outputText>
+                            </td>
+                            <td class="total numberAlign"> {!oppName.BForm_EBT_Perc__c}% </td>
+                           
+                        </tr>
+                        <!-- Total Ends -->
+                   
+                </div>
+                
+                <div>
+                    <iframe src="/apex/BFormGraph?id={!oppName.id}" style="height: 900px;width: 100%;border-width: 0px;"/>
+                </div>
+            </div>
+        </apex:form>
+    </body>
+</html>
+</apex:page>

@@ -1,0 +1,4 @@
+<apex:page standardController="Contact" showHeader="false" sidebar="false" showQuickActionVfHeader="false">
+
+<apex:iframe src="/flow/ContactCreateRouting" scrolling="true" id="theIframe"/>
+</apex:page>
